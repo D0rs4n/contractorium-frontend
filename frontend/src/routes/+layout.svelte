@@ -8,13 +8,16 @@
 	import 'carbon-components-svelte/css/all.css';
 	import {
 		Button,
-		Tile,
 		ProgressBar,
-		Grid,
-		Row,
 		Theme,
-		ToastNotification
+		ToastNotification,
+        Header,
+        HeaderNavItem,
+        HeaderNav,
+
+
 	} from 'carbon-components-svelte';
+	import { error } from '@sveltejs/kit';
 
 	let trigger: boolean | null;
 	let stored_wallet: { name: string; address: string } | undefined;
@@ -26,34 +29,41 @@
 			stored_wallet = value;
 		}
 	});
+    const setTrigger = (val: boolean) => {
+        trigger = val;
+    } 
 
 	onDestroy(unsubscribe);
 </script>
-
+<Header company="Contractorium" platformName="An asset based bug bounty platform">
 <Theme bind:theme />
-<Grid>
 	{#if stored_wallet !== undefined}
-		<Row
-			><Tile>{displayAlgoAddress(stored_wallet.address)}</Tile>
-			<Button kind="danger-tertiary" on:click={disconnect}>Disconnect!</Button></Row
-		>
+            <HeaderNav>
+            <HeaderNavItem text="Connected as {displayAlgoAddress(stored_wallet.address)}" />
+			<Button kind="danger-tertiary" on:click={() => {
+                disconnect();
+                trigger = false;
+            }}>Disconnect!</Button> 
+            </HeaderNav>
 	{:else}
 		<Button kind="primary" on:click={() => (trigger = true)}>Connect Wallet!</Button>
 	{/if}
-</Grid>
+<HeaderNav>
 {#if trigger}
 	{#await connect_wallet()}
-		<ProgressBar helperText="Connecting to Wallet!" />
+		<ProgressBar helperText="Connecting to your Wallet.." />
 	{:then _}
+    <div>
 		<ToastNotification
 			kind="success"
 			title="Success"
 			subtitle="Wallet Successfully connected!"
-			caption={new Date().toLocaleString()}
 		/>
+    </div>
 	{:catch error}
-		<p style="color: red">{error.message}</p>
+        {setTrigger(false)}
 	{/await}
 {/if}
-
+</HeaderNav>
+</Header>
 <slot />
