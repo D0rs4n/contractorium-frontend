@@ -10,14 +10,9 @@
 	import TailwindCSS from '../TailwindCSS.svelte';
 	import ConnectModal from '../lib/connectModal.svelte';
 	import {
-		Button,
 		ProgressBar,
 		ToastNotification,
-        Header,
-        HeaderNavItem,
-        HeaderNav,
-
-
+		Button
 	} from 'carbon-components-svelte';
 	import { error } from '@sveltejs/kit';
 
@@ -34,59 +29,49 @@
         trigger = val;
     } 
 
+
 	onDestroy(unsubscribe);
 </script>
 
 <TailwindCSS />
 
-<!--<main class="w-full h-screen bg-darkGrey">
-	{#if stored_wallet !== undefined}
-		<ConnectModal isConnected={true} wallettAddress={displayAlgoAddress(stored_wallet.address)} />
-		{#if trigger}
-		{#await connect_wallet()}
-			<ProgressBar helperText="Connecting to Wallet!" />
-		{:then _}
-			<ToastNotification
-				kind="success"
-				title="Success"
-				subtitle="Wallet Successfully connected!"
-				caption={new Date().toLocaleString()}
-			/>
-		{:catch error}
-			<p style="color: red">{error.message}</p>
-		{/await}
-	{/if}
+<main class="w-full h-screen bg-darkGrey">
+	<div class="w-full bg-navbarBg md:px-8 py-5 px-4 drop-shadow-lg rounded-b-lg md:flex md:justify-between">
+		<div class="flex flex-col items-center md:flex-row">
+			<div class="">
+				<span class="font-bold uppercase text-darkBlue text-2xl">Contractorium</span>
+				<div class="text-xs text-gray-400 ml-1">An asset based bug bounty platform</div>
+			</div>
+			<div class="flex items-center mt-4 md:mt-0">
+				{#if stored_wallet !== undefined}
+					<ConnectModal connectStatus={"connected"} wallettAddress={displayAlgoAddress(stored_wallet.address)} />
+				{:else if !trigger}
+					<button on:click={() => (trigger = true)}>
+						<ConnectModal connectStatus={"not connected"}/>
+					</button>
+				{/if}
+				{#if trigger}
+					{#await connect_wallet() }
+						<ConnectModal connectStatus={"connecting"} />
+					{:then _}
+						<!--<ToastNotification
+							kind="success"
+							title="Success"
+							subtitle="Wallet Successfully connected!"
+							caption={new Date().toLocaleString()}
+						/>-->
+					{:catch error}
+						{setTrigger(false)}
+					{/await}
+				{/if}
+			</div>
+
+		</div>
+		<div class="">
+			{#if stored_wallet !== undefined}
+				<button on:click={() => {disconnect(); setTrigger(false)}} class="text-white mt-2">disconnect</button>
+			{/if}
+		</div>
+	</div>
 	<slot />
-</main>-->
-<Header company="Contractorium" platformName="An asset based bug bounty platform">
-	{#if stored_wallet !== undefined}
-            <HeaderNav>
-            <HeaderNavItem text="Connected as {displayAlgoAddress(stored_wallet.address)}" />
-			<Button kind="danger-tertiary" on:click={() => {
-                disconnect();
-                trigger = false;
-            }}>Disconnect!</Button> 
-            </HeaderNav>
-	{:else}
-		<!--<ConnectModal isConnected={false} />-->
-		<Button kind="primary" on:click={() => (trigger = true)}>Connect Wallet!</Button>
-	{/if}
-<HeaderNav>
-{#if trigger}
-	{#await connect_wallet()}
-		<ProgressBar helperText="Connecting to your Wallet.." />
-	{:then _}
-    <div>
-		<ToastNotification
-			kind="success"
-			title="Success"
-			subtitle="Wallet Successfully connected!"
-		/>
-    </div>
-	{:catch error}
-        {setTrigger(false)}
-	{/await}
-{/if}
-</HeaderNav>
-</Header>
-<slot />
+</main>
