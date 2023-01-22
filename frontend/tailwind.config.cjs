@@ -4,7 +4,9 @@ module.exports = {
 	theme: {
 		extend: {
 			colors: {
-				darkGrey: '#393939'
+				darkGrey: '#393939',
+				darkBlue: '#5890f2',
+				navbarBg: '#202225'
 			}
 		}
 	},
