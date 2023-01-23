@@ -1,21 +1,17 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { connect_wallet, disconnect } from '../lib/myalgo';
-
-	import { wallet } from '../stores';
-	import { displayAlgoAddress } from '../lib/utils';
+	import { wallet, algod_client } from '../stores';
+	import { displayAlgoAddress, isHealthy } from '../lib/utils';
 
 	import 'carbon-components-svelte/css/all.css';
 
 	import TailwindCSS from '../TailwindCSS.svelte';
 	import ConnectModal from '../lib/connectModal.svelte';
-	import {
-		ProgressBar,
-		ToastNotification,
-		Button
-	} from 'carbon-components-svelte';
+	import { ProgressBar, ToastNotification, Button } from 'carbon-components-svelte';
 	import { error } from '@sveltejs/kit';
 
+	let health = true;
 	let trigger: boolean | null;
 	let stored_wallet: { name: string; address: string } | undefined;
 	const unsubscribe = wallet.subscribe((value) => {
@@ -25,18 +21,20 @@
 			stored_wallet = value;
 		}
 	});
-    const setTrigger = (val: boolean) => {
-        trigger = val;
-    } 
-
-
+	const setTrigger = (val: boolean) => {
+		trigger = val;
+	};
+	onMount(() => {
+		health = isHealthy();
+	});
 	onDestroy(unsubscribe);
 </script>
 
 <TailwindCSS />
-
 <main class="w-full h-screen bg-darkGrey">
-	<div class="w-full bg-navbarBg md:px-8 py-5 px-4 drop-shadow-lg rounded-b-lg md:flex md:justify-between">
+	<div
+		class="w-full bg-navbarBg md:px-8 py-5 px-4 drop-shadow-lg rounded-b-lg md:flex md:justify-between"
+	>
 		<div class="flex flex-col items-center md:flex-row">
 			<div class="">
 				<span class="font-bold uppercase text-darkBlue text-2xl">Contractorium</span>
@@ -44,15 +42,18 @@
 			</div>
 			<div class="flex items-center mt-4 md:mt-0">
 				{#if stored_wallet !== undefined}
-					<ConnectModal connectStatus={"connected"} walletAddress={displayAlgoAddress(stored_wallet.address)} />
+					<ConnectModal
+						connectStatus={'connected'}
+						walletAddress={displayAlgoAddress(stored_wallet.address)}
+					/>
 				{:else if !trigger}
 					<button on:click={() => (trigger = true)}>
-						<ConnectModal connectStatus={"not connected"}/>
+						<ConnectModal connectStatus={'not connected'} />
 					</button>
 				{/if}
 				{#if trigger}
-					{#await connect_wallet() }
-						<ConnectModal connectStatus={"connecting"} />
+					{#await connect_wallet()}
+						<ConnectModal connectStatus={'connecting'} />
 					{:then _}
 						<!--<ToastNotification
 							kind="success"
@@ -65,11 +66,16 @@
 					{/await}
 				{/if}
 			</div>
-
 		</div>
 		<div class="">
 			{#if stored_wallet !== undefined}
-				<button on:click={() => {disconnect(); setTrigger(false)}} class="text-white mt-2">disconnect</button>
+				<button
+					on:click={() => {
+						disconnect();
+						setTrigger(false);
+					}}
+					class="text-white mt-2">disconnect</button
+				>
 			{/if}
 		</div>
 	</div>
