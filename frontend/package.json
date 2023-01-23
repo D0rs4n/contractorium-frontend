@@ -35,6 +35,7 @@
 	"dependencies": {
 		"@randlabs/myalgo-connect": "^1.4.2",
 		"@rollup/plugin-inject": "^5.0.3",
-		"algosdk": "^2.0.0"
+		"algosdk": "^2.0.0",
+		"buffer": "^6.0.3"
 	}
 }

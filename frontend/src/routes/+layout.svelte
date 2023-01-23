@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { connect_wallet, disconnect } from '../lib/myalgo';
 
 	import { wallet } from '../stores';
@@ -44,7 +44,7 @@
 			</div>
 			<div class="flex items-center mt-4 md:mt-0">
 				{#if stored_wallet !== undefined}
-					<ConnectModal connectStatus={"connected"} wallettAddress={displayAlgoAddress(stored_wallet.address)} />
+					<ConnectModal connectStatus={"connected"} walletAddress={displayAlgoAddress(stored_wallet.address)} />
 				{:else if !trigger}
 					<button on:click={() => (trigger = true)}>
 						<ConnectModal connectStatus={"not connected"}/>
