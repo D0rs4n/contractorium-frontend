@@ -14,7 +14,7 @@
 </script>
 
 {#if connectStatus === 'connected'}
-	<div class="md:ml-10 ">
+	<div class="md:ml-8">
 		<h1 class="text-xl text-white">{walletAddress}</h1>
 		<div class="flex items-center justify-center md:justify-start">
 			<span class="flex w-3 h-3 bg-green-500 rounded-full float-left " />
@@ -45,6 +45,6 @@
 	</div>
 {:else if connectStatus === 'not connected'}
 	<div class="md:ml-10">
-		<p class="text-white">Connect Wallet</p>
+		<button class="text-white mt-2 border-2 border-darkBlue hover: transition-transform hover:scale-105 rounded-lg py-2 px-5">Connect Wallet</button>
 	</div>
 {/if}

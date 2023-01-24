@@ -32,7 +32,7 @@
 </script>
 
 <TailwindCSS />
-<main class="w-full h-screen bg-darkGrey">
+<main class="w-full min-h-screen bg-darkGrey font-lato">
 	<div
 		class="w-full bg-navbarBg md:px-8 py-5 px-4 drop-shadow-lg rounded-b-lg md:flex md:justify-between"
 	>
@@ -68,14 +68,14 @@
 				{/if}
 			</div>
 		</div>
-		<div class="">
+		<div class="flex">
 			{#if stored_wallet !== undefined}
 				<button
 					on:click={() => {
 						disconnect();
 						setTrigger(false);
 					}}
-					class="text-white mt-2">disconnect</button
+					class="text-white border-2 text-md border-red-400 transition-transform hover:scale-105 rounded-lg py-2 mx-auto md:mx-0 mt-4 md:mt-0 md:py-0 px-5 align-middle ">disconnect</button
 				>
 			{/if}
 		</div>
