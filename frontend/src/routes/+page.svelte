@@ -1,17 +1,41 @@
 <script lang="ts">
 	import { fetchPrograms } from '../lib/utils';
+    import { BugBounty } from '../lib/collections';
+    import BountyCard from '../lib/bountyCard.svelte';
+
+    let programs: BugBounty[] = [
+        new BugBounty("J65XM4...6DHNCE","Catch the ladybug", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsumLorem ipsum Lorem ipsum Lorem ipsum Lorem ipsumLorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum", false, "https://cdn.discordapp.com/attachments/375333831496040458/1067508763344519268/download.png"), 
+        new BugBounty("J65XM4...6DHNCE","Catch the ladybug", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum", true, "https://cdn.discordapp.com/attachments/375333831496040458/1067530611776049182/732221.png"), 
+        new BugBounty("J65XM4...6DHNCE","Catch the ladybug", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum", true, "https://cdn.discordapp.com/attachments/375333831496040458/1067508763344519268/download.png"), 
+        new BugBounty("J65XM4...6DHNCE","Catch the ladybug", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum", true, "https://cdn.discordapp.com/attachments/375333831496040458/1067530611776049182/732221.png"), 
+        new BugBounty("J65XM4...6DHNCE","Catch the ladybug", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum", true, "https://cdn.discordapp.com/attachments/375333831496040458/1067508763344519268/download.png"), 
+        new BugBounty("J65XM4...6DHNCE","Catch the ladybug", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum", true, "https://cdn.discordapp.com/attachments/375333831496040458/1067530611776049182/732221.png"), 
+        new BugBounty("J65XM4...6DHNCE","Catch the ladybug", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum", true, "https://cdn.discordapp.com/attachments/375333831496040458/1067508763344519268/download.png"), 
+        new BugBounty("J65XM4...6DHNCE","Catch the ladybug", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum", true, "https://cdn.discordapp.com/attachments/375333831496040458/1067530611776049182/732221.png"), 
+        new BugBounty("J65XM4...6DHNCE","Catch the ladybug", "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum", true, "https://cdn.discordapp.com/attachments/375333831496040458/1067508763344519268/download.png"), 
+    ];
 </script>
 
-{#await fetchPrograms()}
-	<!-- TODO Loading animation of some sort-->
-{:then programs}
-        {#each programs as program}
-            <!-- TODO Cards -->
-        {/each}
 
-
-
-
-{:catch error}
-	<p style="color: red">{error.message}</p>
-{/await}
+<div class="flex mt-16 md:mt-28 pb-10">
+    <div class="mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!--{#await fetchPrograms()}
+                    {#each [1,2,3] as loading}
+                        <div class="bg-navbarBg rounded-3xl md:mx-0 mx-4 py-12 px-10 text-white drop-shadow-lg max-w-lg transition-transform ease-in-out  hover:scale-105 duration-300 hover:drop-shadow-red hover:cursor-pointer" >
+                            <div class="relative mb-4">
+                            <h1 class="text-xl font-medium text-green-400 bg-darkGrey rounded-xl animate-pulse"><br /></h1>
+                            <p class="text-md text-gray-300 max-w-md bg-darkGrey rounded-xl mt-4 h-16 animate-pulse"><br/></p>
+                            </div>
+                        </div>
+                    {/each}-->
+            <!--{:then programs}-->
+                    {#each programs as program}
+                        <BountyCard program={program}/>
+                    {/each}
+            <!--{:catch error}
+                <p style="color: red">{error.message}</p>
+            {/await}-->
+        </div>
+    </div>
+</div>
