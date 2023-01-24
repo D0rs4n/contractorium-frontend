@@ -1,5 +1,10 @@
 import { algod_client } from '../stores';
+import { ABIType, type ABIValue } from 'algosdk';
 import { env } from '$env/dynamic/public';
+import { BugBounty } from './collections';
+import type { ABIResult } from 'beaker-ts';
+
+const codec = ABIType.from("(string,string,bool,string)")
 
 export function displayAlgoAddress(address: string): string {
 	const firstPart = address.slice(0, 6);
@@ -21,19 +26,20 @@ export function isHealthy(): boolean {
 	return health;
 }
 
-export async function fetchPrograms(): Promise<string[][]> {
+export async function fetchPrograms(): Promise<BugBounty[]> {
 	const res = await algod_client.getApplicationBoxes(parseInt(env.PUBLIC_APP_ID)).do();
 	const boxNames = res.boxes.map((box) => box.name);
-	const contents = [];
+	const contents: BugBounty[] = [];
 	for (const boxName of boxNames) {
-		const content = await algod_client
+		const content_encoded = await algod_client
 			.getApplicationBoxByName(parseInt(env.PUBLIC_APP_ID), boxName)
 			.do();
-		const content_parsed = new TextDecoder()
-			.decode(content.value)
-			.replace("\u0000\u0005\u0000'\u0000\u0000 ", '')
-			.split('\u0000C');
-		contents.push(content_parsed);
+		
+		const content_decoded: ABIValue = codec.decode(content_encoded.value);
+		if(Array.isArray(content_decoded)) {
+		contents.push(new BugBounty(content_decoded[0], content_decoded[1], content_decoded[2], content_decoded[3]));
+		}
+		console.log(contents)
 	}
 	return contents;
 }

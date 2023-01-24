@@ -3,11 +3,15 @@
 </script>
 
 {#await fetchPrograms()}
-	<p>fetching programs...</p>
+	<!-- TODO Loading animation of some sort-->
 {:then programs}
-	{#each programs as program}
-		<!-- TODO show cards of the programs. -->
-	{/each}
+        {#each programs as program}
+            <!-- TODO Cards -->
+        {/each}
+
+
+
+
 {:catch error}
 	<p style="color: red">{error.message}</p>
 {/await}
