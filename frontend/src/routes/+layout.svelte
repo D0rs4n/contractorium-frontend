@@ -3,7 +3,7 @@
 	import { connect_wallet, disconnect } from '../lib/myalgo';
 	import { wallet, algod_client } from '../stores';
 	import { displayAlgoAddress, isHealthy } from '../lib/utils';
-
+	import { Buffer } from 'buffer';
 	import 'carbon-components-svelte/css/all.css';
 
 	import TailwindCSS from '../TailwindCSS.svelte';
@@ -26,6 +26,7 @@
 	};
 	onMount(() => {
 		health = isHealthy();
+		window.Buffer = Buffer
 	});
 	onDestroy(unsubscribe);
 </script>
