@@ -33,7 +33,6 @@ export async function fetchPrograms(): Promise<string[][]> {
 			.decode(content.value)
 			.replace("\u0000\u0005\u0000'\u0000\u0000 ", '')
 			.split('\u0000C');
-		console.log(content_parsed);
 		contents.push(content_parsed);
 	}
 	return contents;
