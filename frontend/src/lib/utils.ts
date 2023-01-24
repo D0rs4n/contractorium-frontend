@@ -1,5 +1,5 @@
 import { algod_client } from '../stores';
-import { ABIType, type ABIValue } from 'algosdk';
+import { ABIType, type ABIValue, encodeAddress } from 'algosdk';
 import { env } from '$env/dynamic/public';
 import { BugBounty } from './collections';
 import type { ABIResult } from 'beaker-ts';
@@ -37,9 +37,8 @@ export async function fetchPrograms(): Promise<BugBounty[]> {
 		
 		const content_decoded: ABIValue = codec.decode(content_encoded.value);
 		if(Array.isArray(content_decoded)) {
-		contents.push(new BugBounty(content_decoded[0], content_decoded[1], content_decoded[2], content_decoded[3]));
+		contents.push(new BugBounty(encodeAddress(boxName), content_decoded[0], content_decoded[1], content_decoded[2], content_decoded[3]));
 		}
-		console.log(contents)
 	}
 	return contents;
 }
