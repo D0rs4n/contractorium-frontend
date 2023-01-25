@@ -2,9 +2,7 @@ import { algod_client } from '../stores';
 import { ABIType, type ABIValue, encodeAddress } from 'algosdk';
 import { env } from '$env/dynamic/public';
 import { BugBounty } from './collections';
-import type { ABIResult } from 'beaker-ts';
-
-const codec = ABIType.from("(string,string,bool,string)")
+const codec = ABIType.from('(string,string,bool,string)');
 
 export function displayAlgoAddress(address: string): string {
 	const firstPart = address.slice(0, 6);
@@ -34,10 +32,18 @@ export async function fetchPrograms(): Promise<BugBounty[]> {
 		const content_encoded = await algod_client
 			.getApplicationBoxByName(parseInt(env.PUBLIC_APP_ID), boxName)
 			.do();
-		
+
 		const content_decoded: ABIValue = codec.decode(content_encoded.value);
-		if(Array.isArray(content_decoded)) {
-		contents.push(new BugBounty(encodeAddress(boxName), content_decoded[0], content_decoded[1], content_decoded[2], content_decoded[3]));
+		if (Array.isArray(content_decoded)) {
+			contents.push(
+				new BugBounty(
+					encodeAddress(boxName),
+					content_decoded[0],
+					content_decoded[1],
+					content_decoded[2],
+					content_decoded[3]
+				)
+			);
 		}
 	}
 	return contents;

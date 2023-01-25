@@ -1,19 +1,15 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { connect_wallet, disconnect } from '../lib/myalgo';
-	import { wallet, algod_client } from '../stores';
+	import { wallet } from '../stores';
 	import { displayAlgoAddress, isHealthy } from '../lib/utils';
 	import { Buffer } from 'buffer';
-	import 'carbon-components-svelte/css/all.css';
-
 	import TailwindCSS from '../TailwindCSS.svelte';
 	import ConnectModal from '../lib/connectModal.svelte';
-	import { ProgressBar, ToastNotification, Button } from 'carbon-components-svelte';
-	import { error } from '@sveltejs/kit';
 
 	let health = true;
 	let trigger: boolean | null;
-	let stored_wallet: { name: string; address: string } | undefined;
+	export let stored_wallet: { name: string; address: string } | undefined;
 	const unsubscribe = wallet.subscribe((value) => {
 		if (value !== undefined) {
 			stored_wallet = JSON.parse(value);
@@ -26,7 +22,7 @@
 	};
 	onMount(() => {
 		health = isHealthy();
-		window.Buffer = Buffer
+		window.Buffer = Buffer;
 	});
 	onDestroy(unsubscribe);
 </script>
@@ -75,7 +71,8 @@
 						disconnect();
 						setTrigger(false);
 					}}
-					class="text-white border-2 text-md border-red-400 transition-transform hover:scale-105 rounded-lg py-2 mx-auto md:mx-0 mt-4 md:mt-0 md:py-0 px-5 align-middle ">disconnect</button
+					class="text-white border-2 text-md border-red-400 transition-transform hover:scale-105 rounded-lg py-2 mx-auto md:mx-0 mt-4 md:mt-0 md:py-0 px-5 align-middle "
+					>disconnect</button
 				>
 			{/if}
 		</div>
