@@ -2,6 +2,7 @@ import { algod_client } from '../stores';
 import { ABIType, type ABIValue, encodeAddress } from 'algosdk';
 import { env } from '$env/dynamic/public';
 import { BugBounty } from './collections';
+
 const codec = ABIType.from('(string,string,bool,string)');
 
 export function displayAlgoAddress(address: string): string {

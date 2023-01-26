@@ -11,6 +11,11 @@
 
 	let stored_wallet: { name: string; address: string } | undefined;
 	let trigger = false;
+	let trigger_new_bounty = true;
+	function set_trigger_new_bounty(new_state: boolean): string {
+		trigger_new_bounty = new_state;
+		return "";
+	}
 	const unsubscribe = wallet.subscribe((value) => {
 		if (value !== undefined) {
 			stored_wallet = JSON.parse(value);
@@ -62,14 +67,14 @@
 			}
 		);
         } catch (error_msg) {
-            console.log("Error bazdmeg");
+            // FrontEnd Dev
         }
 		trigger = false;
 		return res;
 	}
 </script>
 
-{#if stored_wallet !== undefined}
+{#if stored_wallet !== undefined && trigger_new_bounty}
 	<button
 		on:click={() => {
 			trigger = true;
@@ -77,7 +82,7 @@
 	>
 {/if}
 {#if trigger}
-	{#await addBounty("alma","alma","alma")}
+	{#await addBounty("","","")}
     <div class="md:ml-10">
 		<div>
 			<svg
@@ -129,6 +134,9 @@
 					<h2>No Bounties to show, yet.</h2>
 				{/if}
 				{#each programs as program}
+					{#if program.creator == stored_wallet?.address}
+						{set_trigger_new_bounty(false)}
+					{/if}
 					<BountyCard {program} />
 				{/each}
 			{:catch error}
