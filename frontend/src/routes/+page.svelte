@@ -7,12 +7,12 @@
 	import { ContractoriumPlatform } from '../beaker/contractoriumplatform_client';
 	import { env } from '$env/dynamic/public';
 	import { error } from '@sveltejs/kit';
-	import type { PageServerLoad } from './$types';
+	import type { PageData } from './$types';
 
 	let stored_wallet: { name: string; address: string } | undefined;
 	let trigger = false;
 	let trigger_new_bounty = true;
- 	export let data: PageServerLoad;
+ 	export let data: PageData;
 	function set_trigger_new_bounty(new_state: boolean): string {
 		trigger_new_bounty = new_state;
 		return "";
