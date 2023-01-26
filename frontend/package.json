@@ -38,6 +38,7 @@
 		"algosdk": "^2.0.0",
 		"beaker-ts": "^0.0.70",
 		"buffer": "^6.0.3",
+		"isomorphic-dompurify": "^0.26.0",
 		"path-browserify": "^1.0.1"
 	}
 }
