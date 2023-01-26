@@ -2,6 +2,7 @@ import { algod_client } from '../stores';
 import { ABIType, type ABIValue, encodeAddress } from 'algosdk';
 import { env } from '$env/dynamic/public';
 import { BugBounty } from './collections';
+import { error } from '@sveltejs/kit';
 
 const codec = ABIType.from('(string,string,bool,string)');
 
@@ -11,17 +12,15 @@ export function displayAlgoAddress(address: string): string {
 	return `${firstPart}...${lastPart}`;
 }
 
-export function isHealthy(): boolean {
+export async function isHealthy(): Promise<boolean> {
 	const health = true;
-	algod_client
+	try {
+		await algod_client
 		.healthCheck()
-		.do()
-		.then(() => {
-			return true;
-		})
-		.catch(() => {
-			return false;
-		});
+		.do()		
+	} catch (error_msg) {
+		return false;
+	}
 	return health;
 }
 
@@ -48,4 +47,19 @@ export async function fetchPrograms(): Promise<BugBounty[]> {
 		}
 	}
 	return contents;
+}
+export async function fetchReportsForProgram(creator_address: string) {
+	const resp = await algod_client.accountInformation(env.PUBLIC_APP_ADDRESS).do()
+	const assets = resp.assets
+	const reports = []
+	for (const asset of assets) {
+		if(asset['is-frozen']) { 
+			continue 
+		};
+		const resp_asset = await algod_client.getAssetByID(asset['asset-id']).do()
+		if(resp_asset.params.freeze == creator_address) {
+			const asset_url = Buffer.from(resp_asset.params['url-b64'], 'base64').toString();
+			// TODO: fetch data from url, perhaps IPFS, and load in the data.
+		}
+	}
 }

@@ -6,6 +6,8 @@
 	import { Buffer } from 'buffer';
 	import TailwindCSS from '../TailwindCSS.svelte';
 	import ConnectModal from '../lib/connectModal.svelte';
+	import { error } from '@sveltejs/kit';
+	import BountyCard from '$lib/bountyCard.svelte';
 
 	let health = true;
 	let trigger: boolean | null;
@@ -20,14 +22,14 @@
 	const setTrigger = (val: boolean) => {
 		trigger = val;
 	};
-	onMount(() => {
-		health = isHealthy();
+	onMount(async () => {
+		health = await isHealthy();
 		window.Buffer = Buffer;
 	});
 	onDestroy(unsubscribe);
 </script>
-
 <TailwindCSS />
+{#if health}
 <main class="w-full min-h-screen bg-darkGrey font-lato">
 	<div
 		class="w-full bg-navbarBg md:px-8 py-5 px-4 drop-shadow-lg rounded-b-lg md:flex md:justify-between"
@@ -79,3 +81,8 @@
 	</div>
 	<slot />
 </main>
+{:else}
+<center><h2>Something went wrong when connecting to the Algorand network, please come back later!</h2></center>
+{/if}
+
+
