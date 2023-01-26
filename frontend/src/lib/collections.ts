@@ -1,4 +1,5 @@
 import type { ABIValue } from 'algosdk';
+import DOMPurify from 'isomorphic-dompurify';
 
 export class BugBounty {
 	creator: ABIValue;
@@ -14,10 +15,10 @@ export class BugBounty {
 		verified: ABIValue,
 		image: ABIValue
 	) {
-		this.creator = creator;
-		this.name = name;
-		this.description = description;
-		this.verified = verified;
-		this.image = image;
+		this.creator = DOMPurify.sanitize(creator as string);
+		this.name = DOMPurify.sanitize(name as string);
+		this.description = DOMPurify.sanitize(description as string);
+		this.verified = verified
+		this.image = DOMPurify.sanitize(image as string);
 	}
 }
