@@ -11,9 +11,9 @@ const config = {
 		adapter: adapter(),
 		csp: {
 			directives: {
-			  'script-src': ['self'],
-			},
-		  },
+				'script-src': ['self']
+			}
+		}
 	}
 };
 

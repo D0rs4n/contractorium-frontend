@@ -32,9 +32,13 @@ export class ContractoriumPlatform extends bkr.ApplicationClient {
 			returns: { type: '(string,string,bool,string)', desc: '' }
 		}),
 		new algosdk.ABIMethod({
-			name: 'set_program_image',
+			name: 'edit_program',
 			desc: '',
-			args: [{ type: 'string', name: 'image', desc: '' }],
+			args: [
+				{ type: 'string', name: 'name', desc: '' },
+				{ type: 'string', name: 'description', desc: '' },
+				{ type: 'string', name: 'image', desc: '' }
+			],
 			returns: { type: '(string,string,bool,string)', desc: '' }
 		}),
 		new algosdk.ABIMethod({
@@ -115,14 +119,19 @@ export class ContractoriumPlatform extends bkr.ApplicationClient {
 			result.returnValue as [string, string, boolean, string]
 		);
 	}
-	async set_program_image(
+	async edit_program(
 		args: {
+			name: string;
+			description: string;
 			image: string;
 		},
 		txnParams?: bkr.TransactionOverrides
 	): Promise<bkr.ABIResult<[string, string, boolean, string]>> {
 		const result = await this.execute(
-			await this.compose.set_program_image({ image: args.image }, txnParams)
+			await this.compose.edit_program(
+				{ name: args.name, description: args.description, image: args.image },
+				txnParams
+			)
 		);
 		return new bkr.ABIResult<[string, string, boolean, string]>(
 			result,
@@ -223,16 +232,18 @@ export class ContractoriumPlatform extends bkr.ApplicationClient {
 				atc
 			);
 		},
-		set_program_image: async (
+		edit_program: async (
 			args: {
+				name: string;
+				description: string;
 				image: string;
 			},
 			txnParams?: bkr.TransactionOverrides,
 			atc?: algosdk.AtomicTransactionComposer
 		): Promise<algosdk.AtomicTransactionComposer> => {
 			return this.addMethodCall(
-				algosdk.getMethodByName(this.methods, 'set_program_image'),
-				{ image: args.image },
+				algosdk.getMethodByName(this.methods, 'edit_program'),
+				{ name: args.name, description: args.description, image: args.image },
 				txnParams,
 				atc
 			);
