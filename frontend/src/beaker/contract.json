@@ -62,8 +62,16 @@
 			"desc": "Verify a program, indicating the program is verified by the platform."
 		},
 		{
-			"name": "set_program_image",
+			"name": "edit_program",
 			"args": [
+				{
+					"type": "string",
+					"name": "name"
+				},
+				{
+					"type": "string",
+					"name": "description"
+				},
 				{
 					"type": "string",
 					"name": "image"
@@ -72,7 +80,7 @@
 			"returns": {
 				"type": "(string,string,bool,string)"
 			},
-			"desc": "Set a bounty programs image."
+			"desc": "Edit a bounty program."
 		},
 		{
 			"name": "create_report",

@@ -23,7 +23,7 @@ wallet.subscribe((value) => {
 		localStorage.setItem('wallet', JSON.stringify(value));
 	}
 });
-if(!building) {
+if (!building) {
 	if (!env.PUBLIC_ALGOD_PORT || !env.PUBLIC_ALGOD_SERVER || !env.PUBLIC_ALGOD_TOKEN) {
 		throw error(500, {
 			message:
@@ -33,7 +33,7 @@ if(!building) {
 }
 export let algod_client: algosdk.Algodv2;
 
-if(!building) {
+if (!building) {
 	algod_client = new algosdk.Algodv2(
 		env.PUBLIC_ALGOD_TOKEN,
 		env.PUBLIC_ALGOD_SERVER,
