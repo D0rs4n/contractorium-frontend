@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { isShowing, newBountyValue, trigger } from '../lib/store_bounty';
+	import { isShowing, newBountyValue, trigger, trigger_new_bounty } from './store_bounty';
 	import { fade } from 'svelte/transition';
-	import { prevent_default } from 'svelte/internal';
 
 	let nameField: string = '';
 	let descField: string = '';
@@ -60,61 +59,129 @@
 		<div class="fixed inset-0 z-10 overflow-y-hidden h-auto">
 			<div class="flex h-full justify-center text-center items-center md:p-0 overflow-y-hidden">
 				<div
-					class="relative transform overflow-y-hidden rounded-lg bg-white text-left shadow-xl d:my-8 md:w-full md:max-w-lg"
+					class="relative transform overflow-y-hidden rounded-lg  text-left shadow-xl d:my-8 md:w-full md:max-w-lg"
 					transition:fade={{ duration: 300 }}
 				>
-					<form method="POST" id="newBountyForm" action="?/newprogram" enctype="multipart/form-data" on:submit|preventDefault={handleSubmit}>
-						<div class="bg-white px-10 md:px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-							<!-- svelte-ignore a11y-click-events-have-key-events -->
-							<div class="right-5 top-3 absolute">
-								<i
-									class="material-icons text-red-500 cursor-pointer"
-									on:click={() => {
-										isShowing.set(false);
-									}}>close</i
-								>
-							</div>
-							<div class="sm:flex sm:items-start">
-								<div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-									<h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title">
-										Create a new bounty program
-									</h3>
-									<div class="mt-2">
-										<p class="mb-1">Name</p>
-										<input
-											type="text"
-											required
-											class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg"
-											placeholder="Name of the bounty"
-											bind:value={$newBountyValue.name}
-                                            name="name"
-											on:change={() => handleChange('name')}
-										/>
-										<p class="text-xs text-red-500 ml-1  absolute">{nameField}</p>
-										<br />
-										<p class="mb-1 mt-6">Description</p>
-										<textarea
-											form="newBountyForm"
-											required
-											class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg resize-none"
-											placeholder="Description of the bounty"
-                                            name="description"
-											bind:value={$newBountyValue.description}
-											on:change={() => handleChange('desc')}
-										/>
-										<p class="text-xs text-red-500 ml-1  absolute">{descField}</p>
-										<input required name="image" type="file" bind:value={$newBountyValue.image} class="mt-6" />
+					{#if $trigger_new_bounty}
+						<form method="POST" id="newBountyForm" action="?/newprogram" enctype="multipart/form-data">
+							<div class="bg-darkGrey px-10 md:px-4 pt-5 pb-4 sm:p-6 sm:pb-4 text-white">
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<div class="right-5 top-3 absolute">
+									<i
+										class="material-icons text-red-500 cursor-pointer"
+										on:click={() => {
+											isShowing.set(false);
+										}}>close</i
+									>
+								</div>
+								<div class="sm:flex sm:items-start">
+									<div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+										<h3 class="text-lg font-medium leading-6" id="modal-title">
+											Create a new bounty program
+										</h3>
+										<div class="mt-2">
+											<p class="mb-1">Name</p>
+											<input
+												type="text"
+												required
+												class="p-2 focus:outline-none bg-transparent border-b-2 border-darkBlue text-white"
+												placeholder="Name of the bounty"
+												bind:value={$newBountyValue.name}
+												name="name"
+												on:change={() => handleChange('name')}
+											/>
+											<p class="text-xs text-red-500 ml-1  absolute">{nameField}</p>
+											<br />
+											<p class="mb-1 mt-6">Description</p>
+											<textarea
+												form="newBountyForm"
+												required
+												class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg resize-none"
+												placeholder="Description of the bounty"
+												name="description"
+												bind:value={$newBountyValue.description}
+												on:change={() => handleChange('desc')}
+											/>
+											<p class="text-xs text-red-500 ml-1 absolute">{descField}</p>
+											<input
+												type="text"
+												bind:value={$newBountyValue.image}
+												class="mt-6"
+												name="image"
+											/>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						<div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-							<button
-								type="submit"
-								class="inline-flex w-full cursor-pointer justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
-							>Create new Bounty</button>
-						</div>
-					</form>
+							<div class="bg-darkGrey px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+								<button
+									type="submit"
+									class="inline-flex w-full cursor-pointer justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+									Create new Bounty
+								</button
+								>
+							</div>
+						</form>
+					{:else}
+						<form method="POST" id="editBountyForm" action="?/editprogram" enctype="multipart/form-data">
+							<div class="bg-white px-10 md:px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<div class="right-5 top-3 absolute">
+									<i
+										class="material-icons text-red-500 cursor-pointer"
+										on:click={() => {
+											isShowing.set(false);
+										}}>close</i
+									>
+								</div>
+								<div class="sm:flex sm:items-start">
+									<div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+										<h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title">
+											Modify the bounty program
+										</h3>
+										<div class="mt-2">
+											<p class="mb-1">Name</p>
+											<input
+												type="text"
+												required
+												class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg"
+												placeholder="Name of the bounty"
+												bind:value={$newBountyValue.name}
+												name="name"
+												on:change={() => handleChange('name')}
+											/>
+											<p class="text-xs text-red-500 ml-1  absolute">{nameField}</p>
+											<br />
+											<p class="mb-1 mt-6">Description</p>
+											<textarea
+												form="newBountyForm"
+												required
+												class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg resize-none"
+												placeholder="Description of the bounty"
+												name="description"
+												bind:value={$newBountyValue.description}
+												on:change={() => handleChange('desc')}
+											/>
+											<p class="text-xs text-red-500 ml-1 absolute">{descField}</p>
+											<input
+												type="text"
+												bind:value={$newBountyValue.image}
+												class="mt-6"
+												name="image"
+											/>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+								<button
+									type="submit"
+									class="inline-flex w-full cursor-pointer justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
+									on:click={() => handleSubmit()}>Create new Bounty</button
+								>
+							</div>
+						</form>
+					{/if}
 				</div>
 			</div>
 		</div>
