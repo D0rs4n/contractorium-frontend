@@ -4,10 +4,9 @@
 	import { wallet } from '../stores';
 	import { displayAlgoAddress, isHealthy } from '../lib/utils';
 	import { Buffer } from 'buffer';
-	import TailwindCSS from '../TailwindCSS.svelte';
 	import ConnectModal from '../lib/connectModal.svelte';
-	import { error } from '@sveltejs/kit';
-	import BountyCard from '$lib/bountyCard.svelte';
+	import BountyModal from '../lib/bountyModal.svelte';
+	import '../app.css';
 
 	let health = true;
 	let trigger: boolean | null;
@@ -29,8 +28,8 @@
 	onDestroy(unsubscribe);
 </script>
 
-<TailwindCSS />
 {#if health}
+	<BountyModal />
 	<main class="w-full min-h-screen bg-darkGrey font-lato">
 		<div
 			class="w-full bg-navbarBg md:px-8 py-5 px-4 drop-shadow-lg rounded-b-lg md:flex md:justify-between"
@@ -74,8 +73,8 @@
 							disconnect();
 							setTrigger(false);
 						}}
-						class="text-white border-2 text-md border-red-400 transition-transform hover:scale-105 rounded-lg py-2 mx-auto md:mx-0 mt-4 md:mt-0 md:py-0 px-5 align-middle "
-						>disconnect</button
+						class="text-white border-2 text-md border-red-400 transition-transform hover:scale-105 rounded-lg py-2 mx-auto md:mx-0 mt-4 md:mt-0 md:py-0 px-5"
+						>disconnect <i class="material-icons ml-1 float-right">exit_to_app</i></button
 					>
 				{/if}
 			</div>

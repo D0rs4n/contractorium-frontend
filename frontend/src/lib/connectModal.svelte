@@ -43,8 +43,8 @@
 {:else if connectStatus === 'not connected'}
 	<div class="md:ml-10">
 		<button
-			class="text-white mt-2 border-2 border-darkBlue hover: transition-transform hover:scale-105 rounded-lg py-2 px-5"
-			>Connect Wallet</button
+			class="text-white mt-2 border-2 border-darkBlue hover: transition-transform hover:scale-105 rounded-lg py-2 px-5 flex justify-center"
+			>Connect Wallet <i class="material-icons ml-2 ">vpn_key</i></button
 		>
 	</div>
 {/if}
