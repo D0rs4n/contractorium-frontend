@@ -9,7 +9,8 @@
 	import { env } from '$env/dynamic/public';
 	import { error } from '@sveltejs/kit';
 	import type { PageData, ActionData } from './$types';
-	
+	import { isShowing, newBountyValue, trigger } from '../lib/store_bounty';
+
 	export let form: ActionData;
 	export let data: PageData;
 
@@ -104,23 +105,21 @@
 		}
 		return res;
 	}
+	function toggleIsShowing(e: boolean) {
+        isShowing.set(e);
+    }
+
 </script>
 {#if stored_wallet !== undefined && trigger_new_bounty}
-<form method="POST" action="?/newprogram">
-	<label>
-		Bounty Program name
-		<input name="name" type="text"> <br>
-	  </label> <br>
-	  <label>
-		Bounty Program Description
-		<input name="description" type="text"> <br>
-	  </label> <br>
-	  <label>
-		  Bounty Program Image (URL as of now)
-		  <input name="image" type="text"> <br>
-		</label> <br>
-	  <button>Create new bounty!</button> <br>
-	</form>
+<div class="md:absolute md:right-0 md:mr-16 md:mt-10 mt-4 flex justify-center">
+        <button
+            class="text-darkBlue transition-transform hover:scale-105 rounded-lg py-2 px-5 flex justify-center"
+            on:click={() => {
+                toggleIsShowing(true);
+            }}
+            >Add new Bounty Program
+        </button>
+    </div>
 {:else if stored_wallet !== undefined && !trigger_new_bounty}
 <form method="POST" action="?/editprogram">
 	<label>
@@ -170,18 +169,18 @@
 {/if}
 
 <div class="flex mt-16 md:mt-28 pb-10">
-	<div class="mx-auto">
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-			{#if data.programs.length == 0}
-				<!-- Frontend Dev -->
-				<h2>No Bounties to show, yet.</h2>
-			{/if}
-			{#each data.programs as program}
-				{#if program.creator == stored_wallet?.address}
-					{set_trigger_new_bounty(false, program)}
-				{/if}
-				<BountyCard {program} />
-			{/each}
-		</div>
-	</div>
+    <div class="mx-auto">
+        {#if data.programs.length === 0}
+            <div class="text-white text-center">No Bounties to show, yet.</div>
+        {:else}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {#each data.programs as program}
+                    {#if program.creator == stored_wallet?.address}
+                        {set_trigger_new_bounty(false, program)}
+                    {/if}
+                    <BountyCard {program} />
+                {/each}
+            </div>
+        {/if}
+    </div>
 </div>

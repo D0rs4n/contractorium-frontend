@@ -6,8 +6,7 @@
 	import { Buffer } from 'buffer';
 	import TailwindCSS from '../TailwindCSS.svelte';
 	import ConnectModal from '../lib/connectModal.svelte';
-	import { error } from '@sveltejs/kit';
-	import BountyCard from '$lib/bountyCard.svelte';
+	import CreateBountyModal from '../lib/createBountyModal.svelte';
 
 	let health = true;
 	let trigger: boolean | null;
@@ -31,6 +30,7 @@
 
 <TailwindCSS />
 {#if health}
+	<CreateBountyModal />
 	<main class="w-full min-h-screen bg-darkGrey font-lato">
 		<div
 			class="w-full bg-navbarBg md:px-8 py-5 px-4 drop-shadow-lg rounded-b-lg md:flex md:justify-between"
