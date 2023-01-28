@@ -7,7 +7,8 @@ module.exports = {
 				darkGrey: '#393939',
 				darkBlue: '#5890f2',
 				navbarBg: '#202225',
-				cardBg: '#333333'
+				cardBg: '#333333',
+				verified: '#578EF8'
 			},
 			fontFamily: {
 				lato: ['Poppins', 'sans-serif']

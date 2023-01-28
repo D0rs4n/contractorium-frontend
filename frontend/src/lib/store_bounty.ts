@@ -17,4 +17,7 @@ export const newBountyValue = writable<newBountyValue>({
 })
 //END
 
+
+export const trigger_new_bounty = writable<boolean>(true); // true if add new bounty, else 
+
 export const trigger = writable<boolean>(false); // trigger new bounty fetch
