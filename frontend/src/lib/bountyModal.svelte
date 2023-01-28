@@ -63,7 +63,7 @@
 					transition:fade={{ duration: 300 }}
 				>
 					{#if $trigger_new_bounty}
-						<form method="POST" id="newBountyForm" action="?/newprogram" enctype="multipart/form-data">
+						<form method="POST" id="newBountyForm" action="?/newprogram" enctype="multipart/form-data" on:submit|preventDefault={handleSubmit}>
 							<div class="bg-darkGrey px-10 md:px-4 pt-5 pb-4 sm:p-6 sm:pb-4 text-white">
 								<!-- svelte-ignore a11y-click-events-have-key-events -->
 								<div class="right-5 top-3 absolute">
@@ -104,7 +104,8 @@
 											/>
 											<p class="text-xs text-red-500 ml-1 absolute">{descField}</p>
 											<input
-												type="text"
+												type="file"
+												required
 												bind:value={$newBountyValue.image}
 												class="mt-6"
 												name="image"
@@ -123,7 +124,7 @@
 							</div>
 						</form>
 					{:else}
-						<form method="POST" id="editBountyForm" action="?/editprogram" enctype="multipart/form-data">
+						<form method="POST" id="editBountyForm" action="?/editprogram" enctype="multipart/form-data" on:submit|preventDefault={handleSubmit}>
 							<div class="bg-white px-10 md:px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
 								<!-- svelte-ignore a11y-click-events-have-key-events -->
 								<div class="right-5 top-3 absolute">
@@ -164,7 +165,8 @@
 											/>
 											<p class="text-xs text-red-500 ml-1 absolute">{descField}</p>
 											<input
-												type="text"
+												type="file"
+												required
 												bind:value={$newBountyValue.image}
 												class="mt-6"
 												name="image"
@@ -177,7 +179,7 @@
 								<button
 									type="submit"
 									class="inline-flex w-full cursor-pointer justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
-									on:click={() => handleSubmit()}>Create new Bounty</button
+									>Modify bounty!</button
 								>
 							</div>
 						</form>
