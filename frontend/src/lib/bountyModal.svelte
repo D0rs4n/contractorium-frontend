@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { isShowing, newBountyValue, trigger } from '../lib/store_bounty';
 	import { fade } from 'svelte/transition';
+	import { prevent_default } from 'svelte/internal';
 
 	let nameField: string = '';
 	let descField: string = '';
@@ -19,7 +20,7 @@
 		}
 	}
 
-	function handleSubmit() {
+	function handleSubmit(e: Event) {
 		if (
 			$newBountyValue.name.length > MINIMUM_NAME_LENGTH &&
 			$newBountyValue.description.length >= MINIMUM_DESC_LENGTH
@@ -27,6 +28,22 @@
 			trigger.set(true);
 			isShowing.set(false);
 		}
+        let submittedForm = e.target as HTMLFormElement;
+        if(submittedForm) {
+            let fileInput = submittedForm.elements[2] as HTMLInputElement;
+            if (fileInput.files) {
+                let mbytes = fileInput.files[0].size / (1024 * 1024)
+                if(fileInput.files[0].type.split("/")[0] != "image" || mbytes > 20) {
+                    // Error handling - Frontend
+                    return 1;
+                }
+            }
+            else {
+                // Impossible scenario, the field is required, but yes. :)
+                return 1;
+            }
+            e.target.submit()
+        }
 	}
 </script>
 
@@ -46,7 +63,7 @@
 					class="relative transform overflow-y-hidden rounded-lg bg-white text-left shadow-xl d:my-8 md:w-full md:max-w-lg"
 					transition:fade={{ duration: 300 }}
 				>
-					<form method="POST" id="newBountyForm" action="?/newprogram">
+					<form method="POST" id="newBountyForm" action="?/newprogram" enctype="multipart/form-data" on:submit|preventDefault={handleSubmit}>
 						<div class="bg-white px-10 md:px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
 							<!-- svelte-ignore a11y-click-events-have-key-events -->
 							<div class="right-5 top-3 absolute">
@@ -85,8 +102,8 @@
 											bind:value={$newBountyValue.description}
 											on:change={() => handleChange('desc')}
 										/>
-										<p class="text-xs text-red-500 ml-1 absolute">{descField}</p>
-										<input type="text" bind:value={$newBountyValue.image} class="mt-6" name="image" />
+										<p class="text-xs text-red-500 ml-1  absolute">{descField}</p>
+										<input required name="image" type="file" bind:value={$newBountyValue.image} class="mt-6" />
 									</div>
 								</div>
 							</div>
@@ -95,7 +112,6 @@
 							<button
 								type="submit"
 								class="inline-flex w-full cursor-pointer justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
-								on:click={() => handleSubmit()}
 							>Create new Bounty</button>
 						</div>
 					</form>
