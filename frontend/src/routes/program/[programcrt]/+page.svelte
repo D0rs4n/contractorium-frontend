@@ -1,10 +1,20 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import ReportList from '../../../lib/reportList.svelte';
 	export let data: PageData;
 </script>
 
+<div class="md:absolute md:left-0 md:ml-16 md:mt-10 mt-4 flex justify-center">
+	<button
+		class="text-darkBlue transition-transform hover:scale-105 rounded-lg py-2 px-5 flex justify-center"
+		on:click={() => {
+			window.location.href = '/';
+		}}
+		>back to home
+	</button>
+</div>
 <div
-	class="bg-navbarBg mt-16 md:mt-24 mx-4 md:w-3/4 md:mx-auto rounded-lg p-8 text-white md:flex md:flex-col-2 md:justify-between md:content-center"
+	class="bg-navbarBg mt-8 md:mt-32 mx-4 md:w-3/4 md:mx-auto rounded-lg p-8 text-white md:flex md:flex-col-2 md:justify-between md:content-center drop-shadow-lg"
 >
 	<div class="md:flex md:flex-col-2 ">
 		<div class="flex flex-row md:block">
@@ -39,6 +49,11 @@
 	</div>
 </div>
 
-{#each data.data as report}
-	{report.name}
-{/each}
+<div class="mt-16 mx-auto md:w-3/4 pb-10">
+	<div class="mt-3">
+		<p class="text-white text-4xl text-center mb-10">Reports</p>
+		{#each data.data as report}
+			<ReportList {report} />
+		{/each}
+	</div>
+</div>
