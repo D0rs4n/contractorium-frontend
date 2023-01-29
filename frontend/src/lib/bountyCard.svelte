@@ -9,6 +9,7 @@
 <!--TODO verify cucc -->
 <div
 	class="bg-navbarBg rounded-3xl md:mx-4 mx-8 py-6 px-10 text-white drop-shadow-lg max-w-md transition-transform ease-in-out hover:scale-105 duration-300 hover:drop-shadow-red hover:cursor-pointer "
+	on:click={() => (window.location.href = '/program/' + program.creator.toString())}
 >
 	<div class="">
 		<img
@@ -23,14 +24,14 @@
 			{/if}
 		</h1>
 	</div>
-	<br>
+	<br />
 	<div class="mt-6 text-right right-0 bottom-0">
 		<p class=" text-sm font-medium w-full">
 			Created by: <span class="font-bold text-darkBlue"
 				>{displayAlgoAddress(program.creator.toString())}</span
 			>
 			{#if own_program}
-			(You)
+				(You)
 			{/if}
 		</p>
 	</div>
