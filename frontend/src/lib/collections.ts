@@ -22,3 +22,19 @@ export class BugBounty {
 		this.image = DOMPurify.sanitize(image as string);
 	}
 }
+
+export class BugBountyReport {
+	creator: ABIValue;
+	name: ABIValue;
+	description: ABIValue;
+
+	constructor(
+		creator: ABIValue,
+		name: ABIValue,
+		description: ABIValue,
+	) {
+		this.creator = DOMPurify.sanitize(creator as string);
+		this.name = DOMPurify.sanitize(name as string);
+		this.description = DOMPurify.sanitize(description as string);
+	}
+}
