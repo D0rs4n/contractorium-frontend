@@ -3,6 +3,7 @@
 	import { displayAlgoAddress } from './utils';
 
 	export let program: BugBounty;
+	export let own_program: boolean;
 </script>
 
 <!--TODO verify cucc -->
@@ -21,13 +22,16 @@
 				<i class="material-icons ml-2 text-verified align-middle justify-center"> verified_user </i>
 			{/if}
 		</h1>
-		<p class="text-md text-gray-300 max-w-md break-words">{program.description.toString()}</p>
 	</div>
+	<br>
 	<div class="mt-6 text-right right-0 bottom-0">
 		<p class=" text-sm font-medium w-full">
 			Created by: <span class="font-bold text-darkBlue"
 				>{displayAlgoAddress(program.creator.toString())}</span
 			>
+			{#if own_program}
+			(You)
+			{/if}
 		</p>
 	</div>
 </div>
