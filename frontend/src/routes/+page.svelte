@@ -9,7 +9,7 @@
 	import { env } from '$env/dynamic/public';
 	import { error } from '@sveltejs/kit';
 	import type { PageData, ActionData } from './$types';
-	import { isShowing, trigger, trigger_new_bounty, newBountyValue } from '../lib/store_bounty';
+	import { isShowing, trigger_new_bounty } from '../lib/store_bounty';
 
 	export let form: ActionData;
 	export let data: PageData;
@@ -125,7 +125,7 @@
 			on:click={() => {
 				toggleIsShowing(true);
 			}}
-			>Modify Bounty Program
+			>Modify your added Bounty Program  <i class="material-icons ml-2 ">create</i>
 		</button>
 	</div>
 {/if}
@@ -169,8 +169,11 @@
 				{#each data.programs as program}
 					{#if program.creator == stored_wallet?.address}
 						{set_trigger_new_bounty(false, program)}
+						<BountyCard program={program} own_program={true} />
+					{:else}
+					<BountyCard program={program} own_program={false} />
 					{/if}
-					<BountyCard {program} />
+					
 				{/each}
 			</div>
 		{/if}
