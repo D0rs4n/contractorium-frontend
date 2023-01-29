@@ -1,7 +1,9 @@
 import type { PageLoad } from './$types';
-import { fetchReportsForProgram } from '../../../lib/utils';
+import { fetchReportsForProgram, fetchOneProgram } from '../../../lib/utils';
+
 export const load = (async ({ params }) => {
 	return {
-		data: await fetchReportsForProgram(params.programcrt)
+		resp: await fetchReportsForProgram(params.programcrt),
+		program: await fetchOneProgram(params.programcrt)
 	};
 }) satisfies PageLoad;

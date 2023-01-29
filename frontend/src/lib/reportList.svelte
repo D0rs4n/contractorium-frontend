@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { BugBountyReport } from './collections';
-
+	import { displayAlgoAddress } from './utils';
 	export let report: BugBountyReport;
 	let isOpen: boolean = false;
 	let divStyle: string;
@@ -10,13 +10,14 @@
 		: 'border rounded-lg border-navbarBg';
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	class="bg-navbarBg mt-4 p-4 mx-4 max-w-3xl md:mx-auto drop-shadow-lg text-white flex justify-between align-middle content-center hover:border-darkBlue cursor-pointer {divStyle}"
 	on:click={() => (isOpen = !isOpen)}
 >
 	<p class="text-lg">{report.name}</p>
 	<p class="text-md font-medium">
-		Created by: <span class="font-bold text-darkBlue">{report.creator.toString()}</span>
+		Created by: <span class="font-bold text-darkBlue">{displayAlgoAddress(report.creator.toString())}</span>
 	</p>
 </div>
 {#if isOpen}

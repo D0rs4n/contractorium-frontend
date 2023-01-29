@@ -57,7 +57,6 @@
 		try {
 			res = await contractoriumplatform_client.create_bounty_program(
 				{
-					// FrontEnd-Dev, forms.
 					name,
 					description,
 					image

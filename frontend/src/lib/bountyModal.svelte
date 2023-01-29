@@ -29,6 +29,7 @@
 		}
 		if (submittedForm) {
 			let fileInput = submittedForm.elements[2] as HTMLInputElement;
+			console.log(fileInput)
 			if (fileInput.files) {
 				let mbytes = fileInput.files[0].size / (1024 * 1024);
 				if (fileInput.files[0].type.split('/')[0] != 'image' || mbytes > 20) {
@@ -100,7 +101,7 @@
 											<br />
 											<p class="mb-1 mt-6">Description</p>
 											<textarea
-												form="editBountyForm"
+												form="newBountyForm"
 												required
 												class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg resize-none md:w-auto w-full"
 												placeholder="Description of the bounty program."
