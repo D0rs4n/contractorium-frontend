@@ -10,7 +10,7 @@
 		on:click={() => {
 			window.location.href = '/';
 		}}
-		>back to home
+		><i class="material-icons">keyboard_backspace</i> back to home
 	</button>
 </div>
 <div

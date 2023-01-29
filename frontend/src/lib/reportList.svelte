@@ -10,6 +10,7 @@
 		: 'border rounded-lg border-navbarBg';
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	class="bg-navbarBg mt-4 p-4 mx-4 max-w-3xl md:mx-auto drop-shadow-lg text-white flex justify-between align-middle content-center hover:border-darkBlue cursor-pointer {divStyle}"
 	on:click={() => (isOpen = !isOpen)}
