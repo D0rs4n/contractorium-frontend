@@ -31,6 +31,7 @@
 	onDestroy(unsubscribe);
 
 	let myAlgoClient: MyAlgoConnect;
+	
 	onMount(async () => {
 		myAlgoClient = new MyAlgoConnect();
 	});

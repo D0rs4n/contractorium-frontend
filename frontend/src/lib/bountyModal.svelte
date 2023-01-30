@@ -31,15 +31,13 @@
 			let fileInput = submittedForm.elements[2] as HTMLInputElement;
 			console.log(fileInput)
 			if (fileInput.files) {
-				let mbytes = fileInput.files[0].size / (1024 * 1024);
+				const mbytes = fileInput.files[0].size / (1024 * 1024);
 				if (fileInput.files[0].type.split('/')[0] != 'image' || mbytes > 20) {
 					// Error handling - Frontend
 					console.log('file error');
 					return 1;
 				}
 			} else {
-				console.log('Impossible schema');
-				// Impossible scenario, the field is required, but yes. :)
 				return 1;
 			}
 			submittedForm.submit();
@@ -67,7 +65,7 @@
 						<form
 							method="POST"
 							id="newBountyForm"
-							action="?/newprogram"
+							action="?/program"
 							enctype="multipart/form-data"
 							on:submit|preventDefault={handleSubmit}
 						>
@@ -135,7 +133,7 @@
 						<form
 							method="POST"
 							id="editBountyForm"
-							action="?/editprogram"
+							action="?/program"
 							enctype="multipart/form-data"
 							on:submit|preventDefault={handleSubmit}
 						>
