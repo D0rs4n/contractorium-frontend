@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isShowing, newBountyValue, trigger_new_bounty } from './store_bounty';
+	import { isShowing, newBountyValue, trigger_new_bounty, current_bounty } from './store_bounty';
 	import { fade } from 'svelte/transition';
 
 	let nameField: string = '';
@@ -41,6 +41,12 @@
 				return 1;
 			}
 			submittedForm.submit();
+		}
+	}
+
+	$: {
+		if (!$trigger_new_bounty) {
+			current_bounty.set($newBountyValue);
 		}
 	}
 </script>
@@ -158,7 +164,7 @@
 												type="text"
 												required
 												class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg"
-												placeholder="Name of the bounty"
+												placeholder={$current_bounty.name.toString()}
 												bind:value={$newBountyValue.name}
 												name="name"
 												on:change={() => handleChange('name')}
@@ -170,9 +176,9 @@
 												form="editBountyForm"
 												required
 												class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg resize-none md:w-auto w-full"
-												placeholder="Description of the bounty"
 												rows="15"
 												cols="42"
+												placeholder={$current_bounty.description.toString()}
 												name="description"
 												bind:value={$newBountyValue.description}
 												on:change={() => handleChange('desc')}
