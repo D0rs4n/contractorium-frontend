@@ -9,16 +9,15 @@
 	import { env } from '$env/dynamic/public';
 	import { error } from '@sveltejs/kit';
 	import type { PageData, ActionData } from './$types';
-	import { isShowing, trigger_new_bounty } from '../lib/store_bounty';
+	import { isShowing, trigger_new_bounty, current_bounty } from '../lib/store_bounty';
 
 	export let form: ActionData;
 	export let data: PageData;
 
 	let stored_wallet: { name: string; address: string } | undefined;
-	let current_bounty: BugBounty;
 	function set_trigger_new_bounty(new_state: boolean, program: BugBounty): string {
 		trigger_new_bounty.set(new_state);
-		current_bounty = program;
+		current_bounty.set(program);
 		return '';
 	}
 	const unsubscribe = wallet.subscribe((value) => {
@@ -31,6 +30,7 @@
 	onDestroy(unsubscribe);
 
 	let myAlgoClient: MyAlgoConnect;
+	
 	onMount(async () => {
 		myAlgoClient = new MyAlgoConnect();
 	});
@@ -57,7 +57,6 @@
 		try {
 			res = await contractoriumplatform_client.create_bounty_program(
 				{
-					// FrontEnd-Dev, forms.
 					name,
 					description,
 					image
@@ -125,7 +124,7 @@
 			on:click={() => {
 				toggleIsShowing(true);
 			}}
-			>Modify your added Bounty Program  <i class="material-icons ml-2 ">create</i>
+			>Modify your added Bounty Program <i class="material-icons ml-2 ">create</i>
 		</button>
 	</div>
 {/if}
@@ -169,11 +168,10 @@
 				{#each data.programs as program}
 					{#if program.creator == stored_wallet?.address}
 						{set_trigger_new_bounty(false, program)}
-						<BountyCard program={program} own_program={true} />
+						<BountyCard {program} own_program={true} />
 					{:else}
-					<BountyCard program={program} own_program={false} />
+						<BountyCard {program} own_program={false} />
 					{/if}
-					
 				{/each}
 			</div>
 		{/if}

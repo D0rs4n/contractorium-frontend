@@ -2,13 +2,21 @@
 import type { Actions } from './$types';
 import { env } from '$env/dynamic/private';
 
+function checkFile(f: File): boolean {
+  const mbytes = f.size / (1024 * 1024);
+  if(f.type.split('/')[0] != 'image' || mbytes > 20) {
+    return false;
+  }
+  return true;
+}
 
 const JWT = "Bearer " + env.PRIVATE_PINATA_JWT
 const IPFSGateway = "https://ipfs.algonode.xyz/ipfs/"
 export const actions = {
-  editprogram: async ({ request }) => {
+  program: async ({ request }) => {
     const data = await request.formData();
     const image_file = data.get("image") as File  
+    if(!checkFile(image_file)) { return { success: false, error: "File checking failed, make sure to upload an image that is less than 20 MB." } }
     const formData: FormData = new FormData();
     let ipfs_hash: string;
     formData.append('file', image_file)
@@ -34,15 +42,7 @@ export const actions = {
     } catch (error) {
       return { success: false };
     }
-
     return { success: true, edit: true,  data: { name: data.get("name")?.toString() || "", description: data.get("description")?.toString() || "", image: ipfs_hash || "" }}
     
   },
-  newprogram: async ({ request }) => {
-    const data = await request.formData();
-    const image_file: File = data.get("image") as File  
-    // Temporarily disabled.
-    return { success: false, edit: false,  data: { name: data.get("name")?.toString() || "", description: data.get("description")?.toString() || "", image: data.get("image")?.toString() || "" }}
-    
-  }
 } satisfies Actions;
