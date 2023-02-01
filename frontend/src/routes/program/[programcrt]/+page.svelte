@@ -9,7 +9,7 @@
 	import { algod_client, wallet } from '../../../stores';
 	import { env } from '$env/dynamic/public';
 	import { error } from '@sveltejs/kit';
-
+	
 	export let data: PageData;
 	export let form: ActionData;
 
@@ -56,7 +56,7 @@
 		try {
 			res = await contractoriumplatform_client.create_report({to, description: description_hash},{boxes: [{appIndex: parseInt(env.PUBLIC_APP_ID),name: algosdk.decodeAddress(to).publicKey}]})
 		} catch (error_msg) {
-			throw error(500, 'Something went wrong processign your application call!' + error_msg);
+			throw error(500, 'Something went wrong processign your application call!');
 		}
 		return res;
 	}
@@ -131,7 +131,7 @@
 					</i>
 				{/if}
 			</h1>
-			<p class="max-w-4xl whitespace-pre">
+			<p class="max-w-4xl overFlowText">
 				{data.program?.description}
 			</p>
 		</div>
@@ -200,7 +200,7 @@
 										<textarea
 											form="newReportForm"
 											required
-											class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg resize-none md:w-auto w-full"
+											class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg resize-none md:w-auto w-7"
 											placeholder="Description of the bounty program."
 											rows="15"
 											cols="42"
@@ -228,4 +228,8 @@
 	.bgCover {
 		background-color: rgba(0, 0, 0, 0.7);
 	}
+	.overFlowText{
+    word-break: break-word;
+   white-space: pre-wrap;
+}
 </style>
