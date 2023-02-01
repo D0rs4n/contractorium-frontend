@@ -1,16 +1,98 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	import type { PageData, ActionData } from './$types';
 	import ReportList from '../../../lib/reportList.svelte';
-	import BountyCard from '$lib/bountyCard.svelte';
 	import { fade } from 'svelte/transition';
+	import MyAlgoConnect from '@randlabs/myalgo-connect';
+	import { onMount } from 'svelte';
+	import algosdk from 'algosdk';
+	import { ContractoriumPlatform } from '../../../beaker/contractoriumplatform_client';
+	import { algod_client, wallet } from '../../../stores';
+	import { env } from '$env/dynamic/public';
+	import { error } from '@sveltejs/kit';
 
 	export let data: PageData;
+	export let form: ActionData;
+
 	let isReportModalOpen: boolean = false;
 
 	const toggleReportModal = (e: boolean) => {
 		isReportModalOpen = e;
 	};
+
+	let myAlgoClient: MyAlgoConnect;
+	
+	onMount(async () => {
+		myAlgoClient = new MyAlgoConnect();
+	});
+
+	async function signer(unsignedTxns: Array<algosdk.Transaction>) {
+		let res = await myAlgoClient.signTransaction(unsignedTxns.map((txn) => txn.toByte()));
+		return res.map((s) => s.blob);
+	}
+	
+	let stored_wallet: { name: string; address: string } | undefined;
+	const unsubscribe = wallet.subscribe((value) => {
+		if (value !== undefined) {
+			stored_wallet = JSON.parse(value);
+		} else {
+			stored_wallet = value;
+		}
+	});
+	
+	let contractoriumplatform_client: undefined | ContractoriumPlatform;
+	if (stored_wallet?.address) {
+		contractoriumplatform_client = new ContractoriumPlatform({
+			client: algod_client,
+			signer,
+			sender: stored_wallet?.address,
+			appId: parseInt(env.PUBLIC_APP_ID)
+		});
+	}
+	async function createReport(to: string, description_hash: string) {
+		if (!contractoriumplatform_client || !stored_wallet?.address || to === undefined || description_hash == undefined) {
+			throw error(503, 'Temporarily unavailable.');
+		}
+		let res;
+		try {
+			res = await contractoriumplatform_client.create_report({to, description: description_hash},{boxes: [{appIndex: parseInt(env.PUBLIC_APP_ID),name: algosdk.decodeAddress(to).publicKey}]})
+		} catch (error_msg) {
+			throw error(500, 'Something went wrong processign your application call!' + error_msg);
+		}
+		return res;
+	}
 </script>
+
+{#if form?.success && data.program?.name.toString() !== undefined}
+	{#await createReport(data.program?.creator.toString(), form.data?.description)}
+		<div class="md:ml-10">
+			<div>
+				<svg
+					aria-hidden="true"
+					class="inline w-4 h-4 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+					viewBox="0 0 100 101"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+						fill="currentColor"
+					/>
+					<path
+						d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+						fill="currentFill"
+					/>
+				</svg>
+				<span class="text-white font-bold">Processing report data...</span>
+			</div>
+		</div>
+	{:then val}
+		{window.location.reload()}
+	{:catch err}
+		<h1>{err}</h1>
+		<!-- Frontend Dev -->
+	{/await}
+{/if}
+
 
 <div class="md:absolute md:left-0 md:ml-16 md:mt-10 mt-4 flex justify-center">
 	<button
@@ -49,7 +131,7 @@
 					</i>
 				{/if}
 			</h1>
-			<p class="max-w-4xl">
+			<p class="max-w-4xl whitespace-pre">
 				{data.program?.description}
 			</p>
 		</div>
@@ -68,7 +150,7 @@
 	<div class="mt-3">
 		<p class="text-white text-4xl text-center mb-10">Reports</p>
 		{#if data.resp && data.resp.success && data.resp.data}
-			{#each data.resp.data as report}
+			{#each data.resp.data as report}	
 				<ReportList {report} />
 			{/each}
 		{/if}
@@ -90,7 +172,7 @@
 					class="relative transform overflow-y-hidden rounded-lg  text-left shadow-xl d:my-8 md:w-full md:max-w-lg"
 					transition:fade={{ duration: 300 }}
 				>
-					<form method="POST" id="newBountyForm" action="?/program" enctype="multipart/form-data">
+					<form method="POST" id="newReportForm" action="?/createreport" enctype="multipart/form-data">
 						<div class="bg-white px-10 md:px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
 							<!-- svelte-ignore a11y-click-events-have-key-events -->
 							<div class="right-5 top-3 absolute">
@@ -102,22 +184,21 @@
 							<div class="sm:flex sm:items-start">
 								<div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 									<h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title">
-										Create new bounty program!
+										Submit a report to {data.program?.name}
 									</h3>
 									<div class="mt-2">
-										<p class="mb-1">Name</p>
+										<p class="mb-1">Title</p>
 										<input
 											type="text"
 											required
 											class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg"
-											placeholder="Name of the bounty program."
+											placeholder="Title of your report"
 											name="name"
 										/>
-										<p class="text-xs text-red-500 ml-1  absolute">???</p>
 										<br />
 										<p class="mb-1 mt-6">Description</p>
 										<textarea
-											form="newBountyForm"
+											form="newReportForm"
 											required
 											class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg resize-none md:w-auto w-full"
 											placeholder="Description of the bounty program."
@@ -125,8 +206,6 @@
 											cols="42"
 											name="description"
 										/>
-										<p class="text-xs text-red-500 ml-1 absolute">???</p>
-										<input type="file" required class="mt-6" name="image" />
 									</div>
 								</div>
 							</div>
@@ -135,7 +214,7 @@
 							<button
 								type="submit"
 								class="inline-flex w-full cursor-pointer justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
-								>Create new bounty program!</button
+								>Submit a report!</button
 							>
 						</div>
 					</form>

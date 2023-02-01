@@ -24,8 +24,9 @@
 	<div
 		class="z-10 max-w-3xl mx-4 md:mx-auto p-4 rounded-b-lg border-b border-l border-r border-darkBlue bg-lightNavBar"
 	>
+		<div class="whitespace-pre">
 		<p class="text-gray-200 text-md">{report.description}</p>
-
+		</div>
 		<div class="mt-4">
 			<button
 				class="outline-none border text-md py-1 px-4 rounded-md border-green-500 bg-green-500 text-white transition-transform hover:scale-105"

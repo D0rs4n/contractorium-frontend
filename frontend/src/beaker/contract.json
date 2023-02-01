@@ -1,134 +1,130 @@
 {
-	"name": "ContractoriumPlatform",
-	"methods": [
-		{
-			"name": "resign_manager",
-			"args": [
-				{
-					"type": "address",
-					"name": "new_manager"
-				}
-			],
-			"returns": {
-				"type": "void"
-			},
-			"desc": "A function that accepts a new Algorand address and sets the manager to this address.\nThe transaction can only succeed if the invoker is the current manager."
-		},
-		{
-			"name": "set_cut",
-			"args": [
-				{
-					"type": "uint64",
-					"name": "new_cut"
-				}
-			],
-			"returns": {
-				"type": "void"
-			},
-			"desc": "A function that accepts a new Algorand address and sets the manager to this address.\nThe transaction can only succeed if the invoker is the current manager."
-		},
-		{
-			"name": "create_bounty_program",
-			"args": [
-				{
-					"type": "string",
-					"name": "name"
-				},
-				{
-					"type": "string",
-					"name": "description"
-				},
-				{
-					"type": "string",
-					"name": "image"
-				}
-			],
-			"returns": {
-				"type": "void"
-			},
-			"desc": "A method to create and store a bug bounty program on the Algorand Blockchain, using Boxes.\nIt accepts a name, a list of authorized members, who can accept bounties, and a description of the program itself."
-		},
-		{
-			"name": "verify_program",
-			"args": [
-				{
-					"type": "address",
-					"name": "program"
-				}
-			],
-			"returns": {
-				"type": "(string,string,bool,string)"
-			},
-			"desc": "Verify a program, indicating the program is verified by the platform."
-		},
-		{
-			"name": "edit_program",
-			"args": [
-				{
-					"type": "string",
-					"name": "name"
-				},
-				{
-					"type": "string",
-					"name": "description"
-				},
-				{
-					"type": "string",
-					"name": "image"
-				}
-			],
-			"returns": {
-				"type": "(string,string,bool,string)"
-			},
-			"desc": "Edit a bounty program."
-		},
-		{
-			"name": "create_report",
-			"args": [
-				{
-					"type": "address",
-					"name": "to"
-				},
-				{
-					"type": "string",
-					"name": "title"
-				},
-				{
-					"type": "string",
-					"name": "description"
-				}
-			],
-			"returns": {
-				"type": "uint64"
-			},
-			"desc": "Create a report, which is represented as an Algorand Standard asset."
-		},
-		{
-			"name": "close_and_pay_report",
-			"args": [
-				{
-					"type": "pay",
-					"name": "payment"
-				},
-				{
-					"type": "string",
-					"name": "bounty_note"
-				}
-			],
-			"returns": {
-				"type": "void"
-			},
-			"desc": "Close and pay a report, this function accepts a PaymentTransaction as a parameter.\nAdditionally, if the report is closed, the Asset representing the bounty will be reconfigured and transfered to the bounty program owner. Furthermore, if the PaymentTransaction's parameters are valid, the hunter will be paid."
-		},
-		{
-			"name": "payday",
-			"args": [],
-			"returns": {
-				"type": "void"
-			},
-			"desc": "Function that will pay out a specified cut from the contract's address to the creator's address."
-		}
-	],
-	"networks": {},
-	"desc": "The base Algorand Contract for the Contractorium Bug Bounty Platform for Smart Contracts."
+    "name": "ContractoriumPlatform",
+    "methods": [
+        {
+            "name": "resign_manager",
+            "args": [
+                {
+                    "type": "address",
+                    "name": "new_manager"
+                }
+            ],
+            "returns": {
+                "type": "void"
+            },
+            "desc": "A function that accepts a new Algorand address and sets the manager to this address.\nThe transaction can only succeed if the invoker is the current manager."
+        },
+        {
+            "name": "set_cut",
+            "args": [
+                {
+                    "type": "uint64",
+                    "name": "new_cut"
+                }
+            ],
+            "returns": {
+                "type": "void"
+            },
+            "desc": "A function that accepts a new Algorand address and sets the manager to this address.\nThe transaction can only succeed if the invoker is the current manager."
+        },
+        {
+            "name": "create_bounty_program",
+            "args": [
+                {
+                    "type": "string",
+                    "name": "name"
+                },
+                {
+                    "type": "string",
+                    "name": "description"
+                },
+                {
+                    "type": "string",
+                    "name": "image"
+                }
+            ],
+            "returns": {
+                "type": "void"
+            },
+            "desc": "A method to create and store a bug bounty program on the Algorand Blockchain, using Boxes.\nIt accepts a name, a list of authorized members, who can accept bounties, and a description of the program itself."
+        },
+        {
+            "name": "verify_program",
+            "args": [
+                {
+                    "type": "address",
+                    "name": "program"
+                }
+            ],
+            "returns": {
+                "type": "(string,string,bool,string)"
+            },
+            "desc": "Verify a program, indicating the program is verified by the platform."
+        },
+        {
+            "name": "edit_program",
+            "args": [
+                {
+                    "type": "string",
+                    "name": "name"
+                },
+                {
+                    "type": "string",
+                    "name": "description"
+                },
+                {
+                    "type": "string",
+                    "name": "image"
+                }
+            ],
+            "returns": {
+                "type": "(string,string,bool,string)"
+            },
+            "desc": "Edit a bounty program."
+        },
+        {
+            "name": "create_report",
+            "args": [
+                {
+                    "type": "address",
+                    "name": "to"
+                },
+                {
+                    "type": "string",
+                    "name": "description"
+                }
+            ],
+            "returns": {
+                "type": "uint64"
+            },
+            "desc": "Create a report, which is represented as an Algorand Standard asset."
+        },
+        {
+            "name": "close_and_pay_report",
+            "args": [
+                {
+                    "type": "pay",
+                    "name": "payment"
+                },
+                {
+                    "type": "string",
+                    "name": "bounty_note"
+                }
+            ],
+            "returns": {
+                "type": "void"
+            },
+            "desc": "Close and pay a report, this function accepts a PaymentTransaction as a parameter.\nAdditionally, if the report is closed, the Asset representing the bounty will be reconfigured and transfered to the bounty program owner. Furthermore, if the PaymentTransaction's parameters are valid, the hunter will be paid."
+        },
+        {
+            "name": "payday",
+            "args": [],
+            "returns": {
+                "type": "void"
+            },
+            "desc": "Function that will pay out a specified cut from the contract's address to the creator's address."
+        }
+    ],
+    "networks": {},
+    "desc": "The base Algorand Contract for the Contractorium Bug Bounty Platform for Smart Contracts."
 }

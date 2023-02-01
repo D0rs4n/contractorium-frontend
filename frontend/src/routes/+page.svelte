@@ -98,7 +98,7 @@
 				}
 			);
 		} catch (error_msg) {
-			throw error(500, 'Something went wrong processign your application call!');
+			throw error(500, 'Something went wrong processign your application call!'+error_msg);
 		}
 		return res;
 	}

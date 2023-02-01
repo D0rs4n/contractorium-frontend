@@ -42,10 +42,13 @@ export async function fetchOneProgram(program: string): Promise<BugBounty | unde
 	if(content_encoded) {
 		const content_decoded: ABIValue = codec.decode(content_encoded.value);
 		if(Array.isArray(content_decoded)) {
+		const resp = await fetch(IPFSGateway+jsEscape(content_decoded[1].toString()))
+		if(!resp.ok) { throw error(404,"Program could not be found!"); }
+		const description = (await resp.json())["data"]["description"]
 		return new BugBounty(
 			program,
 			content_decoded[0],
-			content_decoded[1],
+			description,
 			content_decoded[2],
 			IPFSGateway+jsEscape(content_decoded[3] as string)
 			)
@@ -68,7 +71,7 @@ export async function fetchPrograms(): Promise<BugBounty[]> {
 				new BugBounty(
 					encodeAddress(boxName),
 					content_decoded[0],
-					content_decoded[1],
+					"",
 					content_decoded[2],
 					IPFSGateway+jsEscape(content_decoded[3] as string)
 				)
@@ -99,7 +102,7 @@ export async function fetchReportsForProgram(creator_address: string): Promise<{
 			} catch (error) {
 				return { success: false, data:null }
 			}
-			reports.push(new BugBountyReport(creator_address, json["name"], json["description"]));
+			reports.push(new BugBountyReport(creator_address, json.data["name"], json.data["description"]));
 		}
 	return { success: true, data: reports }
 	}

@@ -71,7 +71,7 @@
 						<form
 							method="POST"
 							id="newBountyForm"
-							action="?/program"
+							action="?/newprogram"
 							enctype="multipart/form-data"
 							on:submit|preventDefault={handleSubmit}
 						>
@@ -139,7 +139,7 @@
 						<form
 							method="POST"
 							id="editBountyForm"
-							action="?/program"
+							action="?/editprogram"
 							enctype="multipart/form-data"
 							on:submit|preventDefault={handleSubmit}
 						>
