@@ -151,7 +151,7 @@
 		<p class="text-white text-4xl text-center mb-10">Reports</p>
 		{#if data.resp && data.resp.success && data.resp.data}
 			{#each data.resp.data as report}	
-				<ReportList {report} />
+				<ReportList {report} wallet_address={stored_wallet?.address} program_creator={data.program?.creator.toString()}/>
 			{/each}
 		{/if}
 	</div>

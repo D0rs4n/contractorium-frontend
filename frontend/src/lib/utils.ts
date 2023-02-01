@@ -88,11 +88,8 @@ export async function fetchReportsForProgram(creator_address: string): Promise<{
 	}
 	const reports = [];
 	for (const asset of assets) {
-		if (asset['is-frozen']) {
-			continue;
-		}
 		const resp_asset = await algod_client.getAssetByID(asset['asset-id']).do();
-		if (resp_asset.params.freeze == creator_address) {
+		if (resp_asset.params.reserve == creator_address) {
 			const asset_url = Buffer.from(resp_asset.params['url-b64'], 'base64').toString().split(".")[1];
 			const escaped_url = IPFSGateway+jsEscape(asset_url)
 			const resp = await fetch(escaped_url);
@@ -100,10 +97,10 @@ export async function fetchReportsForProgram(creator_address: string): Promise<{
 			try {
 				json = await resp.json()
 			} catch (error) {
-				return { success: false, data:null }
+				return { success: false, data: null }
 			}
-			reports.push(new BugBountyReport(creator_address, json.data["name"], json.data["description"]));
+			reports.push(new BugBountyReport(resp_asset.params.freeze, json.data["name"], json.data["description"]));
 		}
-	return { success: true, data: reports }
 	}
+	return { success: true, data: reports }
 }

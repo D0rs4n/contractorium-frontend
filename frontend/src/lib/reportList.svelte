@@ -2,6 +2,9 @@
 	import type { BugBountyReport } from './collections';
 	import { displayAlgoAddress } from './utils';
 	export let report: BugBountyReport;
+	export let wallet_address: string | undefined
+	export let program_creator: string | undefined
+
 	let isOpen: boolean = false;
 	let divStyle: string;
 
@@ -27,17 +30,23 @@
 		<div class="whitespace-pre">
 		<p class="text-gray-200 text-md">{report.description}</p>
 		</div>
+		{#if wallet_address !== undefined}
 		<div class="mt-4">
+			{#if wallet_address == program_creator}
 			<button
 				class="outline-none border text-md py-1 px-4 rounded-md border-green-500 bg-green-500 text-white transition-transform hover:scale-105"
 			>
 				Pay
 			</button>
+			{/if}
+			{#if wallet_address == report.creator}
 			<button
 				class="outline-none border text-md py-1 px-4 rounded-md border-red-500 bg-red-500 text-white transition-transform hover:scale-105"
 			>
 				Close
 			</button>
+			{/if}
 		</div>
+		{/if}
 	</div>
 {/if}
