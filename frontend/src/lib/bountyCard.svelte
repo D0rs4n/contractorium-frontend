@@ -6,7 +6,7 @@
 	export let own_program: boolean;
 </script>
 
-<!--TODO verify cucc -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	class="bg-navbarBg rounded-3xl md:mx-4 mx-8 py-6 px-10 text-white drop-shadow-lg max-w-md transition-transform ease-in-out hover:scale-105 duration-300 hover:drop-shadow-red hover:cursor-pointer "
 	on:click={() => (window.location.href = '/program/' + program.creator.toString())}

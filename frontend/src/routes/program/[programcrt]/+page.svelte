@@ -9,6 +9,8 @@
 	import { algod_client, wallet } from '../../../stores';
 	import { env } from '$env/dynamic/public';
 	import { error } from '@sveltejs/kit';
+	import { notifications } from '../../../lib/store_bounty';
+	import Notification from '$lib/notification.svelte';
 	
 	export let data: PageData;
 	export let form: ActionData;
@@ -50,14 +52,30 @@
 	}
 	async function createReport(to: string, description_hash: string) {
 		if (!contractoriumplatform_client || !stored_wallet?.address || to === undefined || description_hash == undefined) {
-			throw error(503, 'Temporarily unavailable.');
+			return;
 		}
 		let res;
 		try {
 			res = await contractoriumplatform_client.create_report({to, description: description_hash},{boxes: [{appIndex: parseInt(env.PUBLIC_APP_ID),name: algosdk.decodeAddress(to).publicKey}]})
 		} catch (error_msg) {
-			throw error(500, 'Something went wrong processign your application call!');
+			notifications.add("error", "Something went wrong executing your request!", "Application call failed.");
 		}
+		notifications.add("info", "Successfully created a report!","");
+		return res;
+	}
+	async function delete_program() {
+		if (!contractoriumplatform_client || stored_wallet?.address === undefined) {
+			return;
+		}
+		let res;
+		try {
+			res = await contractoriumplatform_client.delete_program({boxes: [{appIndex: parseInt(env.PUBLIC_APP_ID),name: algosdk.decodeAddress(stored_wallet?.address).publicKey}]});
+		} catch (error_msg) {
+			console.log(error_msg)
+			notifications.add("error", "Something went wrong executing your request!", "Application call failed.");
+			return;
+		}
+		notifications.add("info", "Successfully deleted your bounty program!","");
 		return res;
 	}
 </script>
@@ -85,11 +103,6 @@
 				<span class="text-white font-bold">Processing report data...</span>
 			</div>
 		</div>
-	{:then val}
-		{window.location.reload()}
-	{:catch err}
-		<h1>{err}</h1>
-		<!-- Frontend Dev -->
 	{/await}
 {/if}
 
@@ -138,11 +151,21 @@
 	</div>
 	<div class="">
 		<button
-			class="outline-none border border-red-500 bg-red-500 text-white px-3 py-2 rounded-lg flex flex-row mx-auto md:mx-0 md:mt-0 mt-8 transition-transform hover:scale-105"
+			class="outline-none border border-red-500 bg-red-500 text-white px-3 py-2 w-full rounded-lg flex flex-row mx-auto md:mx-0 md:mt-0 mt-8 transition-transform hover:scale-105"
 			on:click={() => toggleReportModal(true)}
 		>
 			Submit report <i class="material-icons ml-2">report </i>
 		</button>
+		{#if stored_wallet && stored_wallet?.address == data.program?.creator}
+		<button
+			class="outline-none border border-red-500 w-full bg-red-500 text-white px-3 py-2 rounded-lg flex flex-row mx-auto md:mx-0 md:mt-4 mt-8 transition-transform hover:scale-105"
+			on:click={async() => {
+				await delete_program();
+			}}
+		>
+			Delete bounty program <i class="material-icons ml-2">report </i>
+		</button>
+		{/if}
 	</div>
 </div>
 

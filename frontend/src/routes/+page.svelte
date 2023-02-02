@@ -9,7 +9,7 @@
 	import { env } from '$env/dynamic/public';
 	import { error } from '@sveltejs/kit';
 	import type { PageData, ActionData } from './$types';
-	import { isShowing, trigger_new_bounty, current_bounty } from '../lib/store_bounty';
+	import { isShowing, trigger_new_bounty, current_bounty, notifications } from '../lib/store_bounty';
 
 	export let form: ActionData;
 	export let data: PageData;
@@ -51,7 +51,7 @@
 	}
 	async function addBounty(name: string, description: string, image: string) {
 		if (!contractoriumplatform_client || !stored_wallet?.address) {
-			throw error(503, 'Temporarily unavailable.');
+			return;
 		}
 		let res;
 		try {
@@ -71,14 +71,16 @@
 				}
 			);
 		} catch (error_msg) {
-			console.log('error_msg');
+			notifications.add("error", "Something went wrong when adding a new bounty!", "");
+			return;
 		}
+		notifications.add("info", "New bounty added!","");
 		return res;
 	}
 
 	async function editBounty(name: string, description: string, image: string) {
 		if (!contractoriumplatform_client || !stored_wallet?.address) {
-			throw error(503, 'Temporarily unavailable.');
+			return;
 		}
 		let res;
 		try {
@@ -98,8 +100,10 @@
 				}
 			);
 		} catch (error_msg) {
-			throw error(500, 'Something went wrong processign your application call!'+error_msg);
+			notifications.add("error", "Something went wrong when adding a new bounty!", "");
+			return;
 		}
+		notifications.add("info", "Bounty successfully edited!", "");
 		return res;
 	}
 	function toggleIsShowing(e: boolean) {
@@ -151,11 +155,6 @@
 				<span class="text-white font-bold">Processing Bounty data...</span>
 			</div>
 		</div>
-	{:then val}
-		{window.location.reload()}
-	{:catch err}
-		<h1>{err}</h1>
-		<!-- Frontend Dev -->
 	{/await}
 {/if}
 
