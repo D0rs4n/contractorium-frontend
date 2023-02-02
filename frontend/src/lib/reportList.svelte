@@ -1,6 +1,14 @@
 <script lang="ts">
+	import MyAlgoConnect, { type SignedTx } from '@randlabs/myalgo-connect';
+	import algosdk from 'algosdk';
+	import { onMount } from 'svelte';
+	import { algod_client } from '../stores';
 	import type { BugBountyReport } from './collections';
 	import { displayAlgoAddress } from './utils';
+	import { env } from '$env/dynamic/public';
+	import { PUBLIC_APP_ADDRESS } from '$env/static/public';
+	import { notifications } from './store_bounty';
+
 	export let report: BugBountyReport;
 	export let wallet_address: string | undefined
 	export let program_creator: string | undefined
@@ -11,6 +19,22 @@
 	$: divStyle = isOpen
 		? 'border-x border-t border-darkBlue rounded-t-lg'
 		: 'border rounded-lg border-navbarBg';
+
+
+	let myAlgoClient: MyAlgoConnect;
+	
+	onMount(async () => {
+		myAlgoClient = new MyAlgoConnect();
+	});
+
+	async function freeze_report(from: string, freezeTarget: string, assetID: number) {
+		const params = await algod_client.getTransactionParams().do();
+		let enc = new TextEncoder()
+		const txn = algosdk.makeAssetFreezeTxnWithSuggestedParamsFromObject( { from, note: enc.encode("Report closed"), assetIndex: assetID, freezeTarget,freezeState: true, suggestedParams: params } )
+		let rawSigned = await myAlgoClient.signTransaction(txn.toByte());
+		let ftx = (await algod_client.sendRawTransaction(rawSigned.blob).do());
+		console.log(ftx)
+	}
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -39,10 +63,15 @@
 				Pay
 			</button>
 			{/if}
-			{#if wallet_address == report.creator}
-			<button
-				class="outline-none border text-md py-1 px-4 rounded-md border-red-500 bg-red-500 text-white transition-transform hover:scale-105"
-			>
+			{#if wallet_address !== undefined && wallet_address == report.creator}
+			<button class="outline-none border text-md py-1 px-4 rounded-md border-red-500 bg-red-500 text-white transition-transform hover:scale-105" on:click={async () => {
+				if (wallet_address !== undefined) {
+					await freeze_report(wallet_address, env.PUBLIC_APP_ADDRESS, parseInt(report.asset_id.toString()))
+				}
+				else {
+					notifications.add("error", "Error, something went wrong.","");
+				}
+			}}>
 				Close
 			</button>
 			{/if}

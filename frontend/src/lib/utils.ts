@@ -102,7 +102,7 @@ export async function fetchReportsForProgram(creator_address: string): Promise<{
 			} catch (error) {
 				return { success: false, data: null }
 			}
-			reports.push(new BugBountyReport(resp_asset.params.freeze, json.data["name"], json.data["description"]));
+			reports.push(new BugBountyReport(resp_asset.index, resp_asset.params.freeze, json.data["name"], json.data["description"]));
 		}
 	}
 	return { success: true, data: reports }
