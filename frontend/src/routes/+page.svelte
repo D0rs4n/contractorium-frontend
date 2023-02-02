@@ -7,7 +7,6 @@
 	import algosdk from 'algosdk';
 	import { ContractoriumPlatform } from '../beaker/contractoriumplatform_client';
 	import { env } from '$env/dynamic/public';
-	import { error } from '@sveltejs/kit';
 	import type { PageData, ActionData } from './$types';
 	import { isShowing, trigger_new_bounty, current_bounty, notifications } from '../lib/store_bounty';
 
@@ -75,6 +74,9 @@
 			return;
 		}
 		notifications.add("info", "New bounty added!","");
+		setTimeout(() => {
+			window.location.reload();
+		}, 2000);
 		return res;
 	}
 
@@ -104,6 +106,9 @@
 			return;
 		}
 		notifications.add("info", "Bounty successfully edited!", "");
+		setTimeout(() => {
+			window.location.reload();
+		}, 2000);
 		return res;
 	}
 	function toggleIsShowing(e: boolean) {
@@ -132,7 +137,7 @@
 		</button>
 	</div>
 {/if}
-{#if form?.success}
+{#if form?.success && form.data !== undefined && form.data !== null && form.data.name !== undefined}
 	{#await form.edit ? editBounty(form.data.name, form.data.description, form.data.image) : addBounty(form.data.name, form.data.description, form.data.image)}
 		<div class="md:ml-10">
 			<div>

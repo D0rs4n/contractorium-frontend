@@ -8,7 +8,6 @@ export async function connect_wallet() {
 		openManager: true
 	});
 	wallet.set(JSON.stringify({ address: accounts[0].address, name: accounts[0].name }));
-	window.location.reload();
 }
 
 export function disconnect() {

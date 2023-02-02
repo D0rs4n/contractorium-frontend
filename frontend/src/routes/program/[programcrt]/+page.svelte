@@ -59,8 +59,12 @@
 			res = await contractoriumplatform_client.create_report({to, description: description_hash},{boxes: [{appIndex: parseInt(env.PUBLIC_APP_ID),name: algosdk.decodeAddress(to).publicKey}]})
 		} catch (error_msg) {
 			notifications.add("error", "Something went wrong executing your request!", "Application call failed.");
+			
 		}
 		notifications.add("info", "Successfully created a report!","");
+		setTimeout(() => {
+			window.location.reload();
+		}, 2000);
 		return res;
 	}
 	async function delete_program() {
@@ -73,6 +77,9 @@
 		} catch (error_msg) {
 			console.log(error_msg)
 			notifications.add("error", "Something went wrong executing your request!", "Application call failed.");
+			setTimeout(() => {
+				window.location.reload();
+			}, 2000);
 			return;
 		}
 		notifications.add("info", "Successfully deleted your bounty program!","");
