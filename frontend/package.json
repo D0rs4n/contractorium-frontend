@@ -37,8 +37,8 @@
 		"@pinata/sdk": "^2.1.0",
 		"@randlabs/myalgo-connect": "^1.4.2",
 		"@rollup/plugin-inject": "^5.0.3",
-		"algosdk": "^2.0.0",
-		"beaker-ts": "^0.0.70",
+		"algosdk": "^2.1.0",
+		"beaker-ts": "^0.0.81",
 		"buffer": "^6.0.3",
 		"isomorphic-dompurify": "^0.26.0",
 		"path-browserify": "^1.0.1"

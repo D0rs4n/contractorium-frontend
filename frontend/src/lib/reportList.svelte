@@ -1,13 +1,14 @@
 <script lang="ts">
 	import MyAlgoConnect, { type SignedTx } from '@randlabs/myalgo-connect';
-	import algosdk from 'algosdk';
+	import algosdk, { type TransactionWithSigner, AtomicTransactionComposer } from 'algosdk';
 	import { onMount } from 'svelte';
 	import { algod_client } from '../stores';
 	import type { BugBountyReport } from './collections';
 	import { displayAlgoAddress } from './utils';
 	import { env } from '$env/dynamic/public';
-	import { PUBLIC_APP_ADDRESS } from '$env/static/public';
 	import { notifications } from './store_bounty';
+	import { ContractoriumPlatform } from '../beaker/contractoriumplatform_client';
+	import { get } from 'svelte/store';
 
 	export let report: BugBountyReport;
 	export let wallet_address: string | undefined
@@ -27,6 +28,19 @@
 		myAlgoClient = new MyAlgoConnect();
 	});
 
+	async function signer(unsignedTxns: Array<algosdk.Transaction>) {
+		let res = await myAlgoClient.signTransaction(unsignedTxns.map((txn) => txn.toByte()));
+		return res.map((s) => s.blob);
+	}
+	let contractoriumplatform_client: undefined | ContractoriumPlatform;
+	if (wallet_address && env.PUBLIC_APP_ID) {
+		contractoriumplatform_client = new ContractoriumPlatform({
+			client: algod_client,
+			signer,
+			sender: wallet_address,
+			appId: parseInt(env.PUBLIC_APP_ID)
+		});
+	}
 
 	async function freeze_report(from: string, freezeTarget: string, assetID: number) {
 		const params = await algod_client.getTransactionParams().do();
@@ -35,8 +49,72 @@
 		let rawSigned = await myAlgoClient.signTransaction(txn.toByte());
 		let ftx = (await algod_client.sendRawTransaction(rawSigned.blob).do());
 		loading_txn = true;
-		let confirmedTxn = await algosdk.waitForConfirmation(algod_client, ftx.txId, 4);
-		loading_txn = false;
+		let confirmedTxn;
+		try {
+			confirmedTxn = await algosdk.waitForConfirmation(algod_client, ftx.txId, 4);
+		} catch (error) {
+			notifications.add("error", "Something went wrong upon archiving the report.","");
+			return
+		}
+		setTimeout(() => {
+				window.location.reload();
+		}, 2000);
+	}
+	async function close_and_pay_report(asset_index: number, bounty_program_creator_address: string, report_creator_address: string, note: string) {
+		if(contractoriumplatform_client === undefined) { 
+			notifications.add("error","Something went wrong when initializing app bridge!","");
+			return; 
+		}
+		// First Opt-in to asset.
+		if(wallet_address === undefined || wallet_address == null) { return; }
+		const params = await algod_client.getTransactionParams().do();
+		const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+			from: wallet_address,
+			to: wallet_address,
+			amount: 0,
+			assetIndex: asset_index,
+			suggestedParams: params
+		})
+		let rawSigned = await myAlgoClient.signTransaction(txn.toByte());
+		
+		let ftx = (await algod_client.sendRawTransaction(rawSigned.blob).do());
+		let confirmedTxn;
+		try {
+			confirmedTxn = await algosdk.waitForConfirmation(algod_client, ftx.txId, 4);
+		} catch (error) {
+			notifications.add("error", "Something went wrong upon archiving the report.","");
+			return;
+		}
+		const payment = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+   			 suggestedParams: await algod_client.getTransactionParams().do(),
+   			 amount: 100_000,
+   			 from: wallet_address,
+   			 to: algosdk.getApplicationAddress(contractoriumplatform_client.appId)
+  		})
+		const tws: TransactionWithSigner = {txn: payment, signer}
+		const atc = new AtomicTransactionComposer()
+		let methodToCall = new algosdk.ABIMethod({ name: "close_and_pay_report", desc: "", args: [{ type: "pay", name: "payment", desc: "" }, { type: "string", name: "bounty_note", desc: "" }], returns: { type: "void", desc: "" } })
+		atc.addMethodCall({
+			appID: contractoriumplatform_client.appId,
+			method: methodToCall,
+			methodArgs: [
+				tws,
+				"test",
+			],
+			sender: wallet_address,
+			suggestedParams: params,
+			signer,
+			boxes: [
+			{
+				appIndex: parseInt(env.PUBLIC_APP_ID),
+				name: algosdk.decodeAddress(wallet_address).publicKey
+			}
+				],
+			appForeignAssets: [asset_index],
+			appAccounts: [bounty_program_creator_address, report_creator_address]
+		});
+		const result = await atc.execute(algod_client, 2)
+		return;
 	}
 </script>
 
@@ -49,6 +127,7 @@
 	<p class="text-md font-medium">
 		Created by: <span class="font-bold text-darkBlue">{displayAlgoAddress(report.creator.toString())}</span>
 	</p>
+	<p>{report.asset_id}</p>
 </div>
 {#if isOpen}
 	<div
@@ -59,10 +138,11 @@
 		</div>
 		{#if wallet_address !== undefined}
 		<div class="mt-4">
-			{#if wallet_address == program_creator}
-			<button
-				class="outline-none border text-md py-1 px-4 rounded-md border-green-500 bg-green-500 text-white transition-transform hover:scale-105"
-			>
+			{#if wallet_address == program_creator }
+			<button class="outline-none border text-md py-1 px-4 rounded-md border-green-500 bg-green-500 text-white transition-transform hover:scale-105" on:click={async () =>{
+				if(program_creator === undefined) { return; }
+				await close_and_pay_report(parseInt(report.asset_id.toString()), program_creator , report.creator.toString(), "Contractorium OptIn");
+			}}>
 				Pay
 			</button>
 			{/if}
@@ -86,10 +166,11 @@
 							fill="currentFill"
 						/>
 					</svg>
-					<span class="text-white font-bold">Closing bounty report..</span>
+					<span class="text-white font-bold">Processing request..</span> <br>
 				</div>
 			</div>
 			{/if}
+			{#if !loading_txn}
 			<button class="outline-none border text-md py-1 px-4 rounded-md border-red-500 bg-red-500 text-white transition-transform hover:scale-105" on:click={async () => {
 				if (wallet_address !== undefined) {
 					await freeze_report(wallet_address, env.PUBLIC_APP_ADDRESS, parseInt(report.asset_id.toString()))
@@ -100,6 +181,7 @@
 			}}>
 				Close
 			</button>
+				{/if}
 			{/if}
 		</div>
 		{/if}

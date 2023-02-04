@@ -4,7 +4,7 @@ import { env } from '$env/dynamic/public';
 import { BugBounty, BugBountyReport } from './collections';
 import { error } from '@sveltejs/kit';
 
-const IPFSGateway = "https://ipfs.algonode.xyz/ipfs/"
+const IPFSGateway = "https://gateway.pinata.cloud/ipfs/"
 
 export function jsEscape(str: string){
     return String(str).replace(/[^\w. ]/gi, function(c){
@@ -32,6 +32,7 @@ export async function isHealthy(): Promise<boolean> {
 
 export async function fetchOneProgram(program: string): Promise<BugBounty | undefined> {
 	let content_encoded;
+	if(!env.PUBLIC_APP_ID) { throw error(404,"Program could not be found, due to internal issues, please come back later!"); }
 	try {
 		content_encoded = await algod_client
 		.getApplicationBoxByName(parseInt(env.PUBLIC_APP_ID), decodeAddress(program).publicKey)

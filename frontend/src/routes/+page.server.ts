@@ -11,7 +11,6 @@ function checkFile(f: File): boolean {
 }
 
 const JWT = "Bearer " + env.PRIVATE_PINATA_JWT
-const IPFSGateway = "https://ipfs.algonode.xyz/ipfs/"
 
 export const actions = {
   editprogram: async ({ request }) => {

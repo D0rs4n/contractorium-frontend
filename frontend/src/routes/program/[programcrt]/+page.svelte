@@ -59,7 +59,7 @@
 			res = await contractoriumplatform_client.create_report({to, description: description_hash},{boxes: [{appIndex: parseInt(env.PUBLIC_APP_ID),name: algosdk.decodeAddress(to).publicKey}]})
 		} catch (error_msg) {
 			notifications.add("error", "Something went wrong executing your request!", "Application call failed.");
-			
+			return;
 		}
 		notifications.add("info", "Successfully created a report!","");
 		setTimeout(() => {
@@ -76,10 +76,7 @@
 			res = await contractoriumplatform_client.delete_program({boxes: [{appIndex: parseInt(env.PUBLIC_APP_ID),name: algosdk.decodeAddress(stored_wallet?.address).publicKey}]});
 		} catch (error_msg) {
 			console.log(error_msg)
-			notifications.add("error", "Something went wrong executing your request!", "Application call failed.");
-			setTimeout(() => {
-				window.location.reload();
-			}, 2000);
+			notifications.add("error", "Something went wrsdfong executing your request!", "Application call failed.");
 			return;
 		}
 		notifications.add("info", "Successfully deleted your bounty program!","");
@@ -157,12 +154,14 @@
 		</div>
 	</div>
 	<div class="">
+		{#if stored_wallet !== undefined}
 		<button
 			class="outline-none border border-red-500 bg-red-500 text-white px-3 py-2 w-full rounded-lg flex flex-row mx-auto md:mx-0 md:mt-0 mt-8 transition-transform hover:scale-105"
 			on:click={() => toggleReportModal(true)}
 		>
 			Submit report <i class="material-icons ml-2">report </i>
 		</button>
+		{/if}
 		{#if stored_wallet && stored_wallet?.address == data.program?.creator}
 		<button
 			class="outline-none border border-red-500 w-full bg-red-500 text-white px-3 py-2 rounded-lg flex flex-row mx-auto md:mx-0 md:mt-4 mt-8 transition-transform hover:scale-105"
