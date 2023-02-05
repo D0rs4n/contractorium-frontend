@@ -24,7 +24,7 @@ wallet.subscribe((value) => {
 	}
 });
 if (!building) {
-	if (!env.PUBLIC_ALGOD_PORT || !env.PUBLIC_ALGOD_SERVER || !env.PUBLIC_ALGOD_TOKEN) {
+	if (!env.PUBLIC_ALGOD_PORT || !env.PUBLIC_ALGOD_SERVER) {
 		throw error(500, {
 			message:
 				"Could not connect to the Algorand network, we're working on it. Please come back later."

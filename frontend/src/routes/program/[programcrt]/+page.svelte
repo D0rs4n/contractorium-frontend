@@ -76,10 +76,11 @@
 			res = await contractoriumplatform_client.delete_program({boxes: [{appIndex: parseInt(env.PUBLIC_APP_ID),name: algosdk.decodeAddress(stored_wallet?.address).publicKey}]});
 		} catch (error_msg) {
 			console.log(error_msg)
-			notifications.add("error", "Something went wrsdfong executing your request!", "Application call failed.");
+			notifications.add("error", "Something went wrong executing your request!", "Application call failed.");
 			return;
 		}
 		notifications.add("info", "Successfully deleted your bounty program!","");
+		window.location.href = '/'
 		return res;
 	}
 </script>
