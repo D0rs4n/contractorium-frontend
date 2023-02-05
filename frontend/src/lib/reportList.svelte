@@ -8,8 +8,6 @@
 	import { env } from '$env/dynamic/public';
 	import { notifications } from './store_bounty';
 	import { ContractoriumPlatform } from '../beaker/contractoriumplatform_client';
-	import { get } from 'svelte/store';
-	import { load } from '../routes/program/[programcrt]/+page';
 
 	export let report: BugBountyReport;
 	export let wallet_address: string | undefined
@@ -43,23 +41,19 @@
 		});
 	}
 
-	async function freeze_report(from: string, freezeTarget: string, assetID: number) {
-		const params = await algod_client.getTransactionParams().do();
-		let enc = new TextEncoder()
-		const txn = algosdk.makeAssetFreezeTxnWithSuggestedParamsFromObject( { from, note: enc.encode("Report closed"), assetIndex: assetID, freezeTarget,freezeState: true, suggestedParams: params } )
-		let rawSigned = await myAlgoClient.signTransaction(txn.toByte());
-		let ftx = (await algod_client.sendRawTransaction(rawSigned.blob).do());
-		loading_txn = true;
-		let confirmedTxn;
+	async function close_report(assetID: number) {
 		try {
-			confirmedTxn = await algosdk.waitForConfirmation(algod_client, ftx.txId, 4);
+			await contractoriumplatform_client?.delete_report({
+				appForeignAssets: [assetID]
+			})
 		} catch (error) {
-			notifications.add("error", "Something went wrong upon archiving the report.","");
-			return
+			notifications.add("error","Something went wrong, please try again later!","")
 		}
+		notifications.add("info","Successfully closed report!","");
 		setTimeout(() => {
-				window.location.reload();
+			window.location.reload();
 		}, 2000);
+		
 	}
 	async function close_and_pay_report(asset_index: number, bounty_program_creator_address: string, report_creator_address: string, note: string) {
 		if(contractoriumplatform_client === undefined) { 
@@ -192,7 +186,7 @@
 			{#if !loading_txn}
 			<button class="outline-none border text-md py-1 px-4 rounded-md border-red-500 bg-red-500 text-white transition-transform hover:scale-105" on:click={async () => {
 				if (wallet_address !== undefined) {
-					await freeze_report(wallet_address, env.PUBLIC_APP_ADDRESS, parseInt(report.asset_id.toString()))
+					await close_report(parseInt(report.asset_id.toString()))
 				}
 				else {
 					notifications.add("error", "Error, something went wrong.","");

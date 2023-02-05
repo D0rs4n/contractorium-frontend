@@ -9,6 +9,7 @@ export class ContractoriumPlatform extends bkr.ApplicationClient {
         new algosdk.ABIMethod({ name: "verify_program", desc: "", args: [{ type: "address", name: "program", desc: "" }], returns: { type: "(string,string,bool,string)", desc: "" } }),
         new algosdk.ABIMethod({ name: "edit_program", desc: "", args: [{ type: "string", name: "name", desc: "" }, { type: "string", name: "description", desc: "" }, { type: "string", name: "image", desc: "" }], returns: { type: "(string,string,bool,string)", desc: "" } }),
         new algosdk.ABIMethod({ name: "delete_program", desc: "", args: [], returns: { type: "void", desc: "" } }),
+        new algosdk.ABIMethod({ name: "delete_report", desc: "", args: [], returns: { type: "void", desc: "" } }),
         new algosdk.ABIMethod({ name: "create_report", desc: "", args: [{ type: "address", name: "to", desc: "" }, { type: "string", name: "description", desc: "" }], returns: { type: "uint64", desc: "" } }),
         new algosdk.ABIMethod({ name: "close_and_pay_report", desc: "", args: [{ type: "pay", name: "payment", desc: "" }, { type: "string", name: "bounty_note", desc: "" }], returns: { type: "void", desc: "" } }),
         new algosdk.ABIMethod({ name: "payday", desc: "", args: [], returns: { type: "void", desc: "" } })
@@ -81,6 +82,10 @@ export class ContractoriumPlatform extends bkr.ApplicationClient {
         const result = await this.execute(await this.compose.delete_program(txnParams));
         return new bkr.ABIResult<void>(result);
     }
+    async delete_report(txnParams?: bkr.TransactionOverrides): Promise<bkr.ABIResult<void>> {
+        const result = await this.execute(await this.compose.delete_report(txnParams));
+        return new bkr.ABIResult<void>(result);
+    }
     async create_report(args: {
         to: string;
         description: string;
@@ -131,6 +136,9 @@ export class ContractoriumPlatform extends bkr.ApplicationClient {
         },
         delete_program: async (txnParams?: bkr.TransactionOverrides, atc?: algosdk.AtomicTransactionComposer): Promise<algosdk.AtomicTransactionComposer> => {
             return this.addMethodCall(algosdk.getMethodByName(this.methods, "delete_program"), {}, txnParams, atc);
+        },
+        delete_report: async (txnParams?: bkr.TransactionOverrides, atc?: algosdk.AtomicTransactionComposer): Promise<algosdk.AtomicTransactionComposer> => {
+            return this.addMethodCall(algosdk.getMethodByName(this.methods, "delete_report"), {}, txnParams, atc);
         },
         create_report: async (args: {
             to: string;
