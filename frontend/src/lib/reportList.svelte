@@ -9,6 +9,7 @@
 	import { notifications } from './store_bounty';
 	import { ContractoriumPlatform } from '../beaker/contractoriumplatform_client';
 	import { get } from 'svelte/store';
+	import { load } from '../routes/program/[programcrt]/+page';
 
 	export let report: BugBountyReport;
 	export let wallet_address: string | undefined
@@ -65,6 +66,7 @@
 			notifications.add("error","Something went wrong when initializing app bridge!","");
 			return; 
 		}
+		loading_txn = true;
 		// First Opt-in to asset.
 		if(wallet_address === undefined || wallet_address == null) { return; }
 		const params = await algod_client.getTransactionParams().do();
@@ -75,7 +77,15 @@
 			assetIndex: asset_index,
 			suggestedParams: params
 		})
-		let rawSigned = await myAlgoClient.signTransaction(txn.toByte());
+		let rawSigned;
+		try {
+			rawSigned = await myAlgoClient.signTransaction(txn.toByte());
+		} catch (error) {
+			notifications.add("error","Something went wrong, please try again later!","");
+			loading_txn = false;
+			return;
+		}
+
 		
 		let ftx = (await algod_client.sendRawTransaction(rawSigned.blob).do());
 		let confirmedTxn;
@@ -113,11 +123,20 @@
 			appForeignAssets: [asset_index],
 			appAccounts: [bounty_program_creator_address, report_creator_address]
 		});
-		const result = await atc.execute(algod_client, 2)
+		try {
+			const result = await atc.execute(algod_client, 2)
+		} catch (error) {
+			notifications.add("error", "Something went wrong, please try again later!","");
+			loading_txn = false;
+			return;
+		}
+		notifications.add("info","Successfully paid report!", "Happy hacking!");
+		setTimeout(() => {
+			window.location.reload();
+		}, 2000);
 		return;
 	}
 </script>
-
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	class="bg-navbarBg mt-4 p-4 mx-4 max-w-3xl md:mx-auto drop-shadow-lg text-white flex justify-between align-middle content-center hover:border-darkBlue cursor-pointer {divStyle}"
@@ -138,7 +157,7 @@
 		</div>
 		{#if wallet_address !== undefined}
 		<div class="mt-4">
-			{#if wallet_address == program_creator }
+			{#if wallet_address == program_creator && loading_txn == false}
 			<button class="outline-none border text-md py-1 px-4 rounded-md border-green-500 bg-green-500 text-white transition-transform hover:scale-105" on:click={async () =>{
 				if(program_creator === undefined) { return; }
 				await close_and_pay_report(parseInt(report.asset_id.toString()), program_creator , report.creator.toString(), "Contractorium OptIn");
@@ -146,7 +165,6 @@
 				Pay
 			</button>
 			{/if}
-			{#if wallet_address !== undefined && wallet_address == report.creator}
 			{#if loading_txn}
 			<div class="md:ml-10">
 				<div>
@@ -170,6 +188,7 @@
 				</div>
 			</div>
 			{/if}
+			{#if wallet_address !== undefined && wallet_address == report.creator}
 			{#if !loading_txn}
 			<button class="outline-none border text-md py-1 px-4 rounded-md border-red-500 bg-red-500 text-white transition-transform hover:scale-105" on:click={async () => {
 				if (wallet_address !== undefined) {
