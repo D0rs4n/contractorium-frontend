@@ -37,9 +37,13 @@
 			class="w-full bg-navbarBg md:px-8 py-5 px-4 drop-shadow-lg rounded-b-lg md:flex md:justify-between"
 		>
 			<div class="flex flex-col items-center md:flex-row">
-				<div class="">
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<div class="cursor-pointer" on:click={() => (window.location.href = '/')}>
 					<span class="font-bold uppercase text-darkBlue text-2xl">Contractorium</span>
-					<div class="text-xs text-gray-400 ml-1">An asset based bug bounty platform</div>
+					<div class="text-xs text-gray-400 ml-1">
+						An asset based bug bounty platform <br /> powered by
+						<a href="https://algonode.io/" class="underline hover:text-gray-400">Algonode.io</a>
+					</div>
 				</div>
 				<div class="flex items-center mt-4 md:mt-0">
 					{#if stored_wallet !== undefined}
@@ -62,7 +66,7 @@
 							subtitle="Wallet Successfully connected!"
 							caption={new Date().toLocaleString()}
 						/>-->
-						{:catch error}
+						{:catch}
 							{setTrigger(false)}
 						{/await}
 					{/if}

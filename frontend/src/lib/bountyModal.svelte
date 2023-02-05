@@ -3,8 +3,8 @@
 	import { fade } from 'svelte/transition';
 	import { notifications } from './store_bounty';
 
-	let nameField: string = '';
-	let descField: string = '';
+	let nameField = '';
+	let descField = '';
 
 	const MINIMUM_NAME_LENGTH = 3; // Consider to put in the .env file
 	const MINIMUM_DESC_LENGTH = 10;
@@ -30,16 +30,20 @@
 		}
 		if (submittedForm) {
 			let fileInput = submittedForm.elements[2] as HTMLInputElement;
-			console.log(fileInput)
+			console.log(fileInput);
 			if (fileInput.files) {
 				const mbytes = fileInput.files[0].size / (1024 * 1024);
 				if (fileInput.files[0].type.split('/')[0] != 'image' || mbytes > 20) {
 					// Error handling - Frontend
-					notifications.add("error", "Wrong file format, or size (<20 MB)", "");
+					notifications.add('error', 'Wrong file format, or size (<20 MB)', '');
 					return 1;
 				}
 			} else {
-				notifications.add("error", "Something went wrong whilst validating data, please try again later.", "");
+				notifications.add(
+					'error',
+					'Something went wrong whilst validating data, please try again later.',
+					''
+				);
 				return 1;
 			}
 			submittedForm.submit();
@@ -98,6 +102,7 @@
 												type="text"
 												required
 												class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg"
+												maxlength="20"
 												placeholder="Name of the bounty program."
 												bind:value={$newBountyValue.name}
 												name="name"
@@ -166,6 +171,7 @@
 												type="text"
 												required
 												class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg"
+												maxlength="40"
 												placeholder={$current_bounty.name.toString()}
 												bind:value={$newBountyValue.name}
 												name="name"

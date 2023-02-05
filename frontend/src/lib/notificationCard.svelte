@@ -3,7 +3,7 @@
 	import type { Notification } from './store_bounty';
 	export let notification: Notification;
 
-	let isVisible: boolean = true;
+	let isVisible = true;
 
 	const toggleVisibility = (e: boolean) => {
 		isVisible = e;
