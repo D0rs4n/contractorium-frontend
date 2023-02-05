@@ -37,7 +37,8 @@
 			class="w-full bg-navbarBg md:px-8 py-5 px-4 drop-shadow-lg rounded-b-lg md:flex md:justify-between"
 		>
 			<div class="flex flex-col items-center md:flex-row">
-				<div class="">
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<div class="cursor-pointer" on:click={() => (window.location.href = '/')}>
 					<span class="font-bold uppercase text-darkBlue text-2xl">Contractorium</span>
 					<div class="text-xs text-gray-400 ml-1">An asset based bug bounty platform</div>
 				</div>

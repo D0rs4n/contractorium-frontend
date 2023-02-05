@@ -11,7 +11,7 @@
 	import { error } from '@sveltejs/kit';
 	import { notifications } from '../../../lib/store_bounty';
 	import Notification from '$lib/notification.svelte';
-	
+
 	export let data: PageData;
 	export let form: ActionData;
 
@@ -22,7 +22,7 @@
 	};
 
 	let myAlgoClient: MyAlgoConnect;
-	
+
 	onMount(async () => {
 		myAlgoClient = new MyAlgoConnect();
 	});
@@ -31,7 +31,7 @@
 		let res = await myAlgoClient.signTransaction(unsignedTxns.map((txn) => txn.toByte()));
 		return res.map((s) => s.blob);
 	}
-	
+
 	let stored_wallet: { name: string; address: string } | undefined;
 	const unsubscribe = wallet.subscribe((value) => {
 		if (value !== undefined) {
@@ -40,7 +40,7 @@
 			stored_wallet = value;
 		}
 	});
-	
+
 	let contractoriumplatform_client: undefined | ContractoriumPlatform;
 	if (stored_wallet?.address) {
 		contractoriumplatform_client = new ContractoriumPlatform({
@@ -51,17 +51,33 @@
 		});
 	}
 	async function createReport(to: string, description_hash: string) {
-		if (!contractoriumplatform_client || !stored_wallet?.address || to === undefined || description_hash == undefined) {
+		if (
+			!contractoriumplatform_client ||
+			!stored_wallet?.address ||
+			to === undefined ||
+			description_hash == undefined
+		) {
 			return;
 		}
 		let res;
 		try {
-			res = await contractoriumplatform_client.create_report({to, description: description_hash},{boxes: [{appIndex: parseInt(env.PUBLIC_APP_ID),name: algosdk.decodeAddress(to).publicKey}]})
+			res = await contractoriumplatform_client.create_report(
+				{ to, description: description_hash },
+				{
+					boxes: [
+						{ appIndex: parseInt(env.PUBLIC_APP_ID), name: algosdk.decodeAddress(to).publicKey }
+					]
+				}
+			);
 		} catch (error_msg) {
-			notifications.add("error", "Something went wrong executing your request!", "Application call failed.");
+			notifications.add(
+				'error',
+				'Something went wrong executing your request!',
+				'Application call failed.'
+			);
 			return;
 		}
-		notifications.add("info", "Successfully created a report!","");
+		notifications.add('info', 'Successfully created a report!', '');
 		setTimeout(() => {
 			window.location.reload();
 		}, 2000);
@@ -73,14 +89,25 @@
 		}
 		let res;
 		try {
-			res = await contractoriumplatform_client.delete_program({boxes: [{appIndex: parseInt(env.PUBLIC_APP_ID),name: algosdk.decodeAddress(stored_wallet?.address).publicKey}]});
+			res = await contractoriumplatform_client.delete_program({
+				boxes: [
+					{
+						appIndex: parseInt(env.PUBLIC_APP_ID),
+						name: algosdk.decodeAddress(stored_wallet?.address).publicKey
+					}
+				]
+			});
 		} catch (error_msg) {
-			console.log(error_msg)
-			notifications.add("error", "Something went wrong executing your request!", "Application call failed.");
+			console.log(error_msg);
+			notifications.add(
+				'error',
+				'Something went wrong executing your request!',
+				'Application call failed.'
+			);
 			return;
 		}
-		notifications.add("info", "Successfully deleted your bounty program!","");
-		window.location.href = '/'
+		notifications.add('info', 'Successfully deleted your bounty program!', '');
+		window.location.href = '/';
 		return res;
 	}
 </script>
@@ -110,7 +137,6 @@
 		</div>
 	{/await}
 {/if}
-
 
 <div class="md:absolute md:left-0 md:ml-16 md:mt-10 mt-4 flex justify-center">
 	<button
@@ -156,22 +182,22 @@
 	</div>
 	<div class="">
 		{#if stored_wallet !== undefined}
-		<button
-			class="outline-none border border-red-500 bg-red-500 text-white px-3 py-2 w-full rounded-lg flex flex-row mx-auto md:mx-0 md:mt-0 mt-8 transition-transform hover:scale-105"
-			on:click={() => toggleReportModal(true)}
-		>
-			Submit report <i class="material-icons ml-2">report </i>
-		</button>
+			<button
+				class="outline-none border border-red-500 bg-red-500 text-white px-3 py-2 w-full rounded-lg flex flex-row mx-auto md:mx-0 md:mt-0 mt-8 transition-transform hover:scale-105"
+				on:click={() => toggleReportModal(true)}
+			>
+				Submit report <i class="material-icons ml-2">report </i>
+			</button>
 		{/if}
 		{#if stored_wallet && stored_wallet?.address == data.program?.creator}
-		<button
-			class="outline-none border border-red-500 w-full bg-red-500 text-white px-3 py-2 rounded-lg flex flex-row mx-auto md:mx-0 md:mt-4 mt-8 transition-transform hover:scale-105"
-			on:click={async() => {
-				await delete_program();
-			}}
-		>
-			Delete bounty program <i class="material-icons ml-2">report </i>
-		</button>
+			<button
+				class="outline-none border border-red-500 w-full bg-red-500 text-white px-3 py-2 rounded-lg flex flex-row mx-auto md:mx-0 md:mt-4 mt-8 transition-transform hover:scale-105"
+				on:click={async () => {
+					await delete_program();
+				}}
+			>
+				Delete bounty program <i class="material-icons ml-2">report </i>
+			</button>
 		{/if}
 	</div>
 </div>
@@ -180,9 +206,15 @@
 	<div class="mt-3">
 		<p class="text-white text-4xl text-center mb-10">Reports</p>
 		{#if data.resp && data.resp.success && data.resp.data}
-			{#each data.resp.data as report}	
-				<ReportList {report} wallet_address={stored_wallet?.address} program_creator={data.program?.creator.toString()}/>
+			{#each data.resp.data as report}
+				<ReportList
+					{report}
+					wallet_address={stored_wallet?.address}
+					program_creator={data.program?.creator.toString()}
+				/>
 			{/each}
+		{:else}
+			<div class="text-center text-gray-400">No reports added</div>
 		{/if}
 	</div>
 </div>
@@ -202,7 +234,12 @@
 					class="relative transform overflow-y-hidden rounded-lg  text-left shadow-xl d:my-8 md:w-full md:max-w-lg"
 					transition:fade={{ duration: 300 }}
 				>
-					<form method="POST" id="newReportForm" action="?/createreport" enctype="multipart/form-data">
+					<form
+						method="POST"
+						id="newReportForm"
+						action="?/createreport"
+						enctype="multipart/form-data"
+					>
 						<div class="bg-white px-10 md:px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
 							<!-- svelte-ignore a11y-click-events-have-key-events -->
 							<div class="right-5 top-3 absolute">
@@ -230,7 +267,7 @@
 										<textarea
 											form="newReportForm"
 											required
-											class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg resize-none md:w-auto w-7"
+											class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg resize-none md:w-auto w-full"
 											placeholder="Description of the bounty program."
 											rows="15"
 											cols="42"
@@ -258,8 +295,8 @@
 	.bgCover {
 		background-color: rgba(0, 0, 0, 0.7);
 	}
-	.overFlowText{
-    word-break: break-word;
-   white-space: pre-wrap;
-}
+	.overFlowText {
+		word-break: break-word;
+		white-space: pre-wrap;
+	}
 </style>
