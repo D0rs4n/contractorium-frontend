@@ -8,7 +8,12 @@
 	import { ContractoriumPlatform } from '../beaker/contractoriumplatform_client';
 	import { env } from '$env/dynamic/public';
 	import type { PageData, ActionData } from './$types';
-	import { isShowing, trigger_new_bounty, current_bounty, notifications } from '../lib/store_bounty';
+	import {
+		isShowing,
+		trigger_new_bounty,
+		current_bounty,
+		notifications
+	} from '../lib/store_bounty';
 
 	export let form: ActionData;
 	export let data: PageData;
@@ -29,7 +34,7 @@
 	onDestroy(unsubscribe);
 
 	let myAlgoClient: MyAlgoConnect;
-	
+
 	onMount(async () => {
 		myAlgoClient = new MyAlgoConnect();
 	});
@@ -70,10 +75,10 @@
 				}
 			);
 		} catch (error_msg) {
-			notifications.add("error", "Something went wrong when adding a new bounty!", "");
+			notifications.add('error', 'Something went wrong when adding a new bounty!', '');
 			return;
 		}
-		notifications.add("info", "New bounty added!","");
+		notifications.add('success', 'New bounty added!', '');
 		setTimeout(() => {
 			window.location.reload();
 		}, 2000);
@@ -102,10 +107,10 @@
 				}
 			);
 		} catch (error_msg) {
-			notifications.add("error", "Something went wrong when adding a new bounty!", "");
+			notifications.add('error', 'Something went wrong when adding a new bounty!', '');
 			return;
 		}
-		notifications.add("info", "Bounty successfully edited!", "");
+		notifications.add('success', 'Bounty successfully edited!', '');
 		setTimeout(() => {
 			window.location.reload();
 		}, 2000);

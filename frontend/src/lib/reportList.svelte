@@ -8,6 +8,7 @@
 	import { env } from '$env/dynamic/public';
 	import { notifications } from './store_bounty';
 	import { ContractoriumPlatform } from '../beaker/contractoriumplatform_client';
+	import { fade } from 'svelte/transition';
 
 	export let report: BugBountyReport;
 	export let wallet_address: string | undefined;
@@ -39,6 +40,13 @@
 			appId: parseInt(env.PUBLIC_APP_ID)
 		});
 	}
+	let isPayModalOpen: boolean = false;
+	let algoInputForReport: number;
+	let noteForReport: string;
+
+	const togglePayModal = (e: boolean) => {
+		isPayModalOpen = e;
+	};
 
 	async function close_report(assetID: number) {
 		try {
@@ -48,7 +56,7 @@
 		} catch (error) {
 			notifications.add('error', 'Something went wrong, please try again later!', '');
 		}
-		notifications.add('info', 'Successfully closed report!', '');
+		notifications.add('success', 'Successfully closed report!', '');
 		setTimeout(() => {
 			window.location.reload();
 		}, 2000);
@@ -57,6 +65,7 @@
 		asset_index: number,
 		bounty_program_creator_address: string,
 		report_creator_address: string,
+		amount_of_algos: number,
 		note: string
 	) {
 		if (contractoriumplatform_client === undefined) {
@@ -72,7 +81,7 @@
 
 		const payment = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
 			suggestedParams: await algod_client.getTransactionParams().do(),
-			amount: 100_000,
+			amount: algosdk.algosToMicroalgos(amount_of_algos),
 			from: wallet_address,
 			to: algosdk.getApplicationAddress(contractoriumplatform_client.appId)
 		});
@@ -90,7 +99,7 @@
 		atc.addMethodCall({
 			appID: contractoriumplatform_client.appId,
 			method: methodToCall,
-			methodArgs: [tws, 'test'],
+			methodArgs: [tws, note],
 			sender: wallet_address,
 			suggestedParams: params,
 			signer,
@@ -110,13 +119,97 @@
 			loading_txn = false;
 			return;
 		}
-		notifications.add('info', 'Successfully paid report!', 'Happy hacking!');
+		notifications.add('success', 'Successfully paid report!', 'Happy hacking!');
 		setTimeout(() => {
 			window.location.reload();
 		}, 2000);
 		return;
 	}
 </script>
+
+{#if isPayModalOpen}
+	<div
+		class="relative z-10 h-full overflow-hidden"
+		aria-labelledby="modal-title"
+		role="dialog"
+		aria-modal="true"
+		transition:fade={{ duration: 300 }}
+	>
+		<div class="fixed inset-0 bgCover bg-opacity-75 overflow-y-hidden">
+			<div class="fixed inset-0 z-10 overflow-y-hidden h-auto">
+				<div class="flex h-full justify-center text-center items-center md:p-0 overflow-y-hidden">
+					<div
+						class="relative transform overflow-y-hidden rounded-lg  text-left shadow-xl d:my-8 md:w-full md:max-w-lg"
+						transition:fade={{ duration: 300 }}
+					>
+						<form
+							enctype="multipart/form-data"
+							on:submit|preventDefault={async () => {
+								if (program_creator === undefined) {
+									return;
+								}
+								await close_and_pay_report(
+									parseInt(report.asset_id.toString()),
+									program_creator,
+									report.creator.toString(),
+									algoInputForReport,
+									noteForReport
+								);
+								togglePayModal(false);
+							}}
+						>
+							<div class="bg-white px-10 md:px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<div class="right-5 top-3 absolute">
+									<i
+										class="material-icons text-red-500 cursor-pointer"
+										on:click={() => {
+											togglePayModal(false);
+										}}>close</i
+									>
+								</div>
+								<div class="sm:flex sm:items-start">
+									<div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+										<h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title">
+											Pay report algo cucc
+										</h3>
+										<div class="mt-2">
+											<p class="mb-1">Number of Algo</p>
+											<input
+												type="number"
+												required
+												class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg"
+												placeholder="Name of the bounty program."
+												name="name"
+												bind:value={algoInputForReport}
+											/>
+										</div>
+										<p class="mb-1">Note</p>
+										<input
+											type="text"
+											required
+											class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg"
+											placeholder="Name of the bounty program."
+											bind:value={noteForReport}
+											name="name"
+										/>
+									</div>
+								</div>
+							</div>
+							<div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+								<button
+									type="submit"
+									class="inline-flex w-full cursor-pointer justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
+									>Pay report</button
+								>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
@@ -144,15 +237,7 @@
 					<button
 						class="outline-none border text-md py-1 px-4 rounded-md border-green-500 bg-green-500 text-white transition-transform hover:scale-105"
 						on:click={async () => {
-							if (program_creator === undefined) {
-								return;
-							}
-							await close_and_pay_report(
-								parseInt(report.asset_id.toString()),
-								program_creator,
-								report.creator.toString(),
-								'Contractorium OptIn'
-							);
+							togglePayModal(true);
 						}}
 					>
 						Pay
@@ -203,6 +288,9 @@
 {/if}
 
 <style>
+	.bgCover {
+		background-color: rgba(0, 0, 0, 0.7);
+	}
 	.overFlowText {
 		word-break: break-word;
 		white-space: pre-wrap;

@@ -77,7 +77,7 @@
 			);
 			return;
 		}
-		notifications.add('info', 'Successfully created a report!', '');
+		notifications.add('success', 'Successfully created a report!', '');
 		setTimeout(() => {
 			window.location.reload();
 		}, 2000);
@@ -106,7 +106,7 @@
 			);
 			return;
 		}
-		notifications.add('info', 'Successfully deleted your bounty program!', '');
+		notifications.add('success', 'Successfully deleted your bounty program!', '');
 		window.location.href = '/';
 		return res;
 	}
@@ -205,7 +205,7 @@
 <div class="mt-16 mx-auto md:w-3/4 pb-10">
 	<div class="mt-3">
 		<p class="text-white text-4xl text-center mb-10">Reports</p>
-		{#if data.resp && data.resp.success && data.resp.data}
+		{#if data.resp && data.resp.success && data.resp.data && data.resp.data.length > 0}
 			{#each data.resp.data as report}
 				<ReportList
 					{report}
