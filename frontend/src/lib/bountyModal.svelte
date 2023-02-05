@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { isShowing, newBountyValue, trigger_new_bounty, current_bounty } from './store_bounty';
 	import { fade } from 'svelte/transition';
+	import { notifications } from './store_bounty';
 
 	let nameField: string = '';
 	let descField: string = '';
@@ -34,10 +35,11 @@
 				const mbytes = fileInput.files[0].size / (1024 * 1024);
 				if (fileInput.files[0].type.split('/')[0] != 'image' || mbytes > 20) {
 					// Error handling - Frontend
-					console.log('file error');
+					notifications.add("error", "Wrong file format, or size (<20 MB)", "");
 					return 1;
 				}
 			} else {
+				notifications.add("error", "Something went wrong whilst validating data, please try again later.", "");
 				return 1;
 			}
 			submittedForm.submit();
@@ -71,7 +73,7 @@
 						<form
 							method="POST"
 							id="newBountyForm"
-							action="?/program"
+							action="?/newprogram"
 							enctype="multipart/form-data"
 							on:submit|preventDefault={handleSubmit}
 						>
@@ -139,7 +141,7 @@
 						<form
 							method="POST"
 							id="editBountyForm"
-							action="?/program"
+							action="?/editprogram"
 							enctype="multipart/form-data"
 							on:submit|preventDefault={handleSubmit}
 						>

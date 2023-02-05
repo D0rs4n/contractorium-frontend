@@ -7,9 +7,8 @@
 	import algosdk from 'algosdk';
 	import { ContractoriumPlatform } from '../beaker/contractoriumplatform_client';
 	import { env } from '$env/dynamic/public';
-	import { error } from '@sveltejs/kit';
 	import type { PageData, ActionData } from './$types';
-	import { isShowing, trigger_new_bounty, current_bounty } from '../lib/store_bounty';
+	import { isShowing, trigger_new_bounty, current_bounty, notifications } from '../lib/store_bounty';
 
 	export let form: ActionData;
 	export let data: PageData;
@@ -51,7 +50,7 @@
 	}
 	async function addBounty(name: string, description: string, image: string) {
 		if (!contractoriumplatform_client || !stored_wallet?.address) {
-			throw error(503, 'Temporarily unavailable.');
+			return;
 		}
 		let res;
 		try {
@@ -71,14 +70,19 @@
 				}
 			);
 		} catch (error_msg) {
-			console.log('error_msg');
+			notifications.add("error", "Something went wrong when adding a new bounty!", "");
+			return;
 		}
+		notifications.add("info", "New bounty added!","");
+		setTimeout(() => {
+			window.location.reload();
+		}, 2000);
 		return res;
 	}
 
 	async function editBounty(name: string, description: string, image: string) {
 		if (!contractoriumplatform_client || !stored_wallet?.address) {
-			throw error(503, 'Temporarily unavailable.');
+			return;
 		}
 		let res;
 		try {
@@ -98,8 +102,13 @@
 				}
 			);
 		} catch (error_msg) {
-			throw error(500, 'Something went wrong processign your application call!');
+			notifications.add("error", "Something went wrong when adding a new bounty!", "");
+			return;
 		}
+		notifications.add("info", "Bounty successfully edited!", "");
+		setTimeout(() => {
+			window.location.reload();
+		}, 2000);
 		return res;
 	}
 	function toggleIsShowing(e: boolean) {
@@ -128,7 +137,7 @@
 		</button>
 	</div>
 {/if}
-{#if form?.success}
+{#if form?.success && form.data !== undefined && form.data !== null && form.data.name !== undefined}
 	{#await form.edit ? editBounty(form.data.name, form.data.description, form.data.image) : addBounty(form.data.name, form.data.description, form.data.image)}
 		<div class="md:ml-10">
 			<div>
@@ -151,11 +160,6 @@
 				<span class="text-white font-bold">Processing Bounty data...</span>
 			</div>
 		</div>
-	{:then val}
-		{window.location.reload()}
-	{:catch err}
-		<h1>{err}</h1>
-		<!-- Frontend Dev -->
 	{/await}
 {/if}
 

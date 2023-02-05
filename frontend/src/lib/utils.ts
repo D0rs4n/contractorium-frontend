@@ -4,7 +4,7 @@ import { env } from '$env/dynamic/public';
 import { BugBounty, BugBountyReport } from './collections';
 import { error } from '@sveltejs/kit';
 
-const IPFSGateway = "https://ipfs.algonode.xyz/ipfs/"
+const IPFSGateway = "https://gateway.pinata.cloud/ipfs/"
 
 export function jsEscape(str: string){
     return String(str).replace(/[^\w. ]/gi, function(c){
@@ -32,6 +32,7 @@ export async function isHealthy(): Promise<boolean> {
 
 export async function fetchOneProgram(program: string): Promise<BugBounty | undefined> {
 	let content_encoded;
+	if(!env.PUBLIC_APP_ID) { throw error(404,"Program could not be found, due to internal issues, please come back later!"); }
 	try {
 		content_encoded = await algod_client
 		.getApplicationBoxByName(parseInt(env.PUBLIC_APP_ID), decodeAddress(program).publicKey)
@@ -42,10 +43,13 @@ export async function fetchOneProgram(program: string): Promise<BugBounty | unde
 	if(content_encoded) {
 		const content_decoded: ABIValue = codec.decode(content_encoded.value);
 		if(Array.isArray(content_decoded)) {
+		const resp = await fetch(IPFSGateway+jsEscape(content_decoded[1].toString()))
+		if(!resp.ok) { throw error(404,"Program could not be found!"); }
+		const description = (await resp.json())["data"]["description"]
 		return new BugBounty(
 			program,
 			content_decoded[0],
-			content_decoded[1],
+			description,
 			content_decoded[2],
 			IPFSGateway+jsEscape(content_decoded[3] as string)
 			)
@@ -68,7 +72,7 @@ export async function fetchPrograms(): Promise<BugBounty[]> {
 				new BugBounty(
 					encodeAddress(boxName),
 					content_decoded[0],
-					content_decoded[1],
+					"",
 					content_decoded[2],
 					IPFSGateway+jsEscape(content_decoded[3] as string)
 				)
@@ -89,7 +93,7 @@ export async function fetchReportsForProgram(creator_address: string): Promise<{
 			continue;
 		}
 		const resp_asset = await algod_client.getAssetByID(asset['asset-id']).do();
-		if (resp_asset.params.freeze == creator_address) {
+		if (resp_asset.params.reserve == creator_address) {
 			const asset_url = Buffer.from(resp_asset.params['url-b64'], 'base64').toString().split(".")[1];
 			const escaped_url = IPFSGateway+jsEscape(asset_url)
 			const resp = await fetch(escaped_url);
@@ -97,10 +101,10 @@ export async function fetchReportsForProgram(creator_address: string): Promise<{
 			try {
 				json = await resp.json()
 			} catch (error) {
-				return { success: false, data:null }
+				return { success: false, data: null }
 			}
-			reports.push(new BugBountyReport(creator_address, json["name"], json["description"]));
+			reports.push(new BugBountyReport(resp_asset.index, resp_asset.params.freeze, json.data["name"], json.data["description"]));
 		}
-	return { success: true, data: reports }
 	}
+	return { success: true, data: reports }
 }

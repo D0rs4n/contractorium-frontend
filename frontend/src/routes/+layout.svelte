@@ -7,6 +7,7 @@
 	import ConnectModal from '../lib/connectModal.svelte';
 	import BountyModal from '../lib/bountyModal.svelte';
 	import '../app.css';
+	import Notification from '$lib/notification.svelte';
 
 	let health = true;
 	let trigger: boolean | null;
@@ -28,8 +29,9 @@
 	onDestroy(unsubscribe);
 </script>
 
+<Notification />
+<BountyModal />
 {#if health}
-	<BountyModal />
 	<main class="w-full min-h-screen bg-darkGrey font-lato">
 		<div
 			class="w-full bg-navbarBg md:px-8 py-5 px-4 drop-shadow-lg rounded-b-lg md:flex md:justify-between"
