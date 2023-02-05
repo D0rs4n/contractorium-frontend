@@ -74,7 +74,7 @@
 					]
 				}
 			);
-		} catch (error_msg) {
+		} catch {
 			notifications.add('error', 'Something went wrong when adding a new bounty!', '');
 			return;
 		}
@@ -106,7 +106,7 @@
 					]
 				}
 			);
-		} catch (error_msg) {
+		} catch {
 			notifications.add('error', 'Something went wrong when adding a new bounty!', '');
 			return;
 		}
@@ -166,6 +166,15 @@
 			</div>
 		</div>
 	{/await}
+{:else if form?.success == false}
+	{() => {
+		notifications.add(
+			'error',
+			'Something went wrong processing your request!',
+			'Please try again later'
+		);
+		return '';
+	}}
 {/if}
 
 <div class="flex mt-16 md:mt-28 pb-10">

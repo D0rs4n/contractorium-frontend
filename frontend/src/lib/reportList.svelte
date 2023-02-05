@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MyAlgoConnect, { type SignedTx } from '@randlabs/myalgo-connect';
+	import MyAlgoConnect from '@randlabs/myalgo-connect';
 	import algosdk, { type TransactionWithSigner, AtomicTransactionComposer } from 'algosdk';
 	import { onMount } from 'svelte';
 	import { algod_client } from '../stores';
@@ -40,7 +40,7 @@
 			appId: parseInt(env.PUBLIC_APP_ID)
 		});
 	}
-	let isPayModalOpen: boolean = false;
+	let isPayModalOpen = false;
 	let algoInputForReport: number;
 	let noteForReport: string;
 
@@ -53,7 +53,7 @@
 			await contractoriumplatform_client?.delete_report({
 				appForeignAssets: [assetID]
 			});
-		} catch (error) {
+		} catch {
 			notifications.add('error', 'Something went wrong, please try again later!', '');
 		}
 		notifications.add('success', 'Successfully closed report!', '');
@@ -113,8 +113,8 @@
 			appAccounts: [bounty_program_creator_address, report_creator_address]
 		});
 		try {
-			const result = await atc.execute(algod_client, 2);
-		} catch (error) {
+			await atc.execute(algod_client, 2);
+		} catch {
 			notifications.add('error', 'Something went wrong, please try again later!', '');
 			loading_txn = false;
 			return;
@@ -171,15 +171,16 @@
 								<div class="sm:flex sm:items-start">
 									<div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 										<h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title">
-											Pay report algo cucc
+											Pay hunter
 										</h3>
 										<div class="mt-2">
-											<p class="mb-1">Number of Algo</p>
+											<p class="mb-1">Number of Algos</p>
 											<input
 												type="number"
+												step=".01"
 												required
 												class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg"
-												placeholder="Name of the bounty program."
+												placeholder="1"
 												name="name"
 												bind:value={algoInputForReport}
 											/>
@@ -189,7 +190,7 @@
 											type="text"
 											required
 											class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg"
-											placeholder="Name of the bounty program."
+											placeholder="Nice catch!"
 											bind:value={noteForReport}
 											name="name"
 										/>

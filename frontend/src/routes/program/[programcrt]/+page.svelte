@@ -3,19 +3,17 @@
 	import ReportList from '../../../lib/reportList.svelte';
 	import { fade } from 'svelte/transition';
 	import MyAlgoConnect from '@randlabs/myalgo-connect';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import algosdk from 'algosdk';
 	import { ContractoriumPlatform } from '../../../beaker/contractoriumplatform_client';
 	import { algod_client, wallet } from '../../../stores';
 	import { env } from '$env/dynamic/public';
-	import { error } from '@sveltejs/kit';
 	import { notifications } from '../../../lib/store_bounty';
-	import Notification from '$lib/notification.svelte';
 
 	export let data: PageData;
 	export let form: ActionData;
 
-	let isReportModalOpen: boolean = false;
+	let isReportModalOpen = false;
 
 	const toggleReportModal = (e: boolean) => {
 		isReportModalOpen = e;
@@ -69,7 +67,7 @@
 					]
 				}
 			);
-		} catch (error_msg) {
+		} catch {
 			notifications.add(
 				'error',
 				'Something went wrong executing your request!',
@@ -97,8 +95,7 @@
 					}
 				]
 			});
-		} catch (error_msg) {
-			console.log(error_msg);
+		} catch {
 			notifications.add(
 				'error',
 				'Something went wrong executing your request!',
@@ -110,6 +107,7 @@
 		window.location.href = '/';
 		return res;
 	}
+	onDestroy(unsubscribe);
 </script>
 
 {#if form?.success && data.program?.name.toString() !== undefined}
@@ -136,6 +134,15 @@
 			</div>
 		</div>
 	{/await}
+{:else if form?.success == false}
+	{() => {
+		notifications.add(
+			'error',
+			'Something went wrong processing your request!',
+			'Please try again later'
+		);
+		return '';
+	}}
 {/if}
 
 <div class="md:absolute md:left-0 md:ml-16 md:mt-10 mt-4 flex justify-center">
