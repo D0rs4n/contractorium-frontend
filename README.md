@@ -16,7 +16,7 @@ graph TD
     A[Company or Project creates a Bug Bounty program on Contractorium] -->|Optinally go through the verification process, currently it works on a reach out basis| B(The program is now live on the Contractorium platform)
     B --> C{A Bug Bounty hunter or researcher finds the program,\n and start working on it,\n and eventually submit a report.\n which will be shown on their profile.}
     C -->|The hunter decides to close the report| D[On the frontend they issue an application call\n which will destroy the asset representing the bounty program]
-    C -->|The program manager decides to compensate the hunter for their findings| E[They issue an application call\n which will pay out the hunter, and subtract the platform form\n then destroy the asset.]
+    C -->|The program manager decides to compensate the hunter for their findings| E[They issue an application call\n which will pay out the hunter, after subtracting the platform fees, which is currently 2% \n then destroy the asset.]
   
 ```
 ## How to setup Contractorium?
