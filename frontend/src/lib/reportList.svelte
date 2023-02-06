@@ -49,18 +49,23 @@
 	};
 
 	async function close_report(assetID: number) {
+		loading_txn = true;
 		try {
 			await contractoriumplatform_client?.delete_report({
 				appForeignAssets: [assetID]
 			});
-		} catch {
+		} catch (error) {
 			notifications.add('error', 'Something went wrong, please try again later!', '');
+			loading_txn = false;
+			return;
 		}
 		notifications.add('success', 'Successfully closed report!', '');
+		loading_txn = false;
 		setTimeout(() => {
 			window.location.reload();
 		}, 2000);
 	}
+
 	async function close_and_pay_report(
 		asset_index: number,
 		bounty_program_creator_address: string,
@@ -148,6 +153,7 @@
 								if (program_creator === undefined) {
 									return;
 								}
+								togglePayModal(false);
 								await close_and_pay_report(
 									parseInt(report.asset_id.toString()),
 									program_creator,
@@ -155,7 +161,6 @@
 									algoInputForReport,
 									noteForReport
 								);
-								togglePayModal(false);
 							}}
 						>
 							<div class="bg-white px-10 md:px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
@@ -214,6 +219,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
+	id={report.asset_id.toString()}
 	class="bg-navbarBg mt-4 p-4 mx-4 max-w-3xl md:mx-auto drop-shadow-lg text-white flex justify-between align-middle content-center hover:border-darkBlue cursor-pointer {divStyle}"
 	on:click={() => (isOpen = !isOpen)}
 >
@@ -223,7 +229,6 @@
 			>{displayAlgoAddress(report.creator.toString())}</span
 		>
 	</p>
-	<p>{report.asset_id}</p>
 </div>
 {#if isOpen}
 	<div
@@ -267,7 +272,7 @@
 						</div>
 					</div>
 				{/if}
-				{#if wallet_address !== undefined && wallet_address == report.creator}
+				{#if wallet_address !== undefined && (wallet_address === report.creator || wallet_address === report.program)}
 					{#if !loading_txn}
 						<button
 							class="outline-none border text-md py-1 px-4 rounded-md border-red-500 bg-red-500 text-white transition-transform hover:scale-105"
