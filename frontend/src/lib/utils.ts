@@ -124,6 +124,7 @@ export async function fetchReportsForProgram(
 				new BugBountyReport(
 					resp_asset.index,
 					resp_asset.params.freeze,
+					resp_asset.params.reserve,
 					json.data['name'],
 					json.data['description']
 				)

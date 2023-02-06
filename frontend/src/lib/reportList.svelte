@@ -213,17 +213,15 @@
 {/if}
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div
+<div id="{report.asset_id.toString()}"
 	class="bg-navbarBg mt-4 p-4 mx-4 max-w-3xl md:mx-auto drop-shadow-lg text-white flex justify-between align-middle content-center hover:border-darkBlue cursor-pointer {divStyle}"
-	on:click={() => (isOpen = !isOpen)}
->
+	on:click={() => (isOpen = !isOpen)}>
 	<p class="text-lg">{report.name}</p>
 	<p class="text-md font-medium">
 		Created by: <span class="font-bold text-darkBlue"
 			>{displayAlgoAddress(report.creator.toString())}</span
 		>
 	</p>
-	<p>{report.asset_id}</p>
 </div>
 {#if isOpen}
 	<div
