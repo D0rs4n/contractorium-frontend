@@ -133,3 +133,43 @@ export async function fetchReportsForProgram(
 	}
 	return { success: true, data: reports };
 }
+
+export async function fetchReportsForAddress(
+	creator_address: string
+): Promise<{ success: boolean; data: BugBountyReport[] | null } | undefined> {
+	const resp = await algod_client.accountInformation(env.PUBLIC_APP_ADDRESS).do();
+	const assets = resp.assets;
+	if (assets.length == 0) {
+		return { success: false, data: [] };
+	}
+	const reports = [];
+	for (const asset of assets) {
+		if (asset['is-frozen']) {
+			continue;
+		}
+		const resp_asset = await algod_client.getAssetByID(asset['asset-id']).do();
+		if (resp_asset.params.freeze == creator_address) {
+			const asset_url = Buffer.from(resp_asset.params['url-b64'], 'base64')
+				.toString()
+				.split('.')[1];
+			const escaped_url = IPFSGateway + jsEscape(asset_url);
+			const resp = await fetch(escaped_url);
+			let json;
+			try {
+				json = await resp.json();
+			} catch {
+				return { success: false, data: null };
+			}
+			reports.push(
+				new BugBountyReport(
+					resp_asset.index,
+					resp_asset.params.freeze,
+					resp_asset.params.reserve,
+					json.data['name'],
+					json.data['description']
+				)
+			);
+		}
+	}
+	return { success: true, data: reports };
+}
