@@ -1,3 +1,4 @@
+import type { Actions } from './$types';
 import { env } from '$env/dynamic/private';
 
 const JWT = 'Bearer ' + env.PRIVATE_PINATA_JWT;
