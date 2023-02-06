@@ -60,7 +60,6 @@
 			return;
 		}
 		notifications.add('success', 'Successfully closed report!', '');
-		loading_txn = false;
 		setTimeout(() => {
 			window.location.reload();
 		}, 2000);

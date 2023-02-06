@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-
+	import { displayAlgoAddress } from './utils';
 	let visible = false;
 	onMount(() => {
 		visible = true;
@@ -12,12 +12,20 @@
 
 {#if connectStatus === 'connected'}
 	<div class="md:ml-8">
-		<h1 class="text-xl text-white">{walletAddress}</h1>
+		{#if walletAddress !== undefined}
+		<h1 class="text-xl text-white">{displayAlgoAddress(walletAddress)} | <button class="text-teal-600" on:click={() => {
+			if(walletAddress !== undefined) {
+			window.location.href = `/hunter/${walletAddress}`;
+		}
+		}}> Hunter profile<i class="text-teal-600 material-icons ml-1 float-right">fingerprint</i></button></h1>
+		{/if}
+		<p class="text- text-sm"></p>
 		<div class="flex items-center justify-center md:justify-start">
 			<span class="flex w-3 h-3 bg-green-500 rounded-full float-left " />
 			<span class="text-white ml-2">Connected</span>
 		</div>
 	</div>
+  
 {:else if connectStatus === 'connecting'}
 	<div class="md:ml-10">
 		<div>

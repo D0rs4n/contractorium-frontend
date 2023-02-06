@@ -2,7 +2,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { connect_wallet, disconnect } from '../lib/myalgo';
 	import { wallet } from '../stores';
-	import { displayAlgoAddress, isHealthy } from '../lib/utils';
+	import { jsEscape, isHealthy } from '../lib/utils';
 	import { Buffer } from 'buffer';
 	import ConnectModal from '../lib/connectModal.svelte';
 	import BountyModal from '../lib/bountyModal.svelte';
@@ -49,7 +49,7 @@
 					{#if stored_wallet !== undefined}
 						<ConnectModal
 							connectStatus={'connected'}
-							walletAddress={displayAlgoAddress(stored_wallet.address)}
+							walletAddress={jsEscape(stored_wallet.address)}
 						/>
 					{:else if !trigger}
 						<button on:click={() => (trigger = true)}>

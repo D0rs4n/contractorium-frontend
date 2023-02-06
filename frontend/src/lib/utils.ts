@@ -54,7 +54,6 @@ export async function fetchOneProgram(program: string): Promise<BugBounty | unde
 					'Program could not be found, due to internal issues, please come back later!'
 				);
 			}
-			console.log(IPFSGateway + jsEscape(content_decoded[1].toString()));
 			if (!resp.ok) {
 				throw error(404, 'Program could not be found!');
 			}
