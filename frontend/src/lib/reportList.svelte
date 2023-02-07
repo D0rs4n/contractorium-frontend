@@ -222,7 +222,9 @@
 	class="bg-navbarBg mt-4 p-4 mx-4 max-w-3xl md:mx-auto drop-shadow-lg text-white flex justify-between align-middle content-center hover:border-darkBlue cursor-pointer {divStyle}"
 	on:click={() => (isOpen = !isOpen)}
 >
+	<div class="overFlowText">
 	<p class="text-lg">{report.name}</p>
+	</div>
 	<p class="text-md font-medium">
 		Created by: <span class="font-bold text-darkBlue"
 			>{displayAlgoAddress(report.creator.toString())}</span

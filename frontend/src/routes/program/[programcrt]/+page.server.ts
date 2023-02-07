@@ -6,6 +6,7 @@ const JWT = 'Bearer ' + env.PRIVATE_PINATA_JWT;
 export const actions = {
 	createreport: async ({ request }) => {
 		const data = await request.formData();
+		if(data.get('name').length > 15) { return { success: false, data: null }  }
 		const jsonToPin = { name: data.get('name'), description: data.get('description') };
 		let reqData;
 		try {
