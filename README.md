@@ -14,7 +14,7 @@ title: Contractorium platform
 ---
 graph TD
     A[Company or Project creates a Bug Bounty program on Contractorium] -->|Optinally go through the verification process, currently it works on a reach out basis| B(The program is now live on the Contractorium platform)
-    B --> C{A Bug Bounty hunter or researcher finds the program,\n and start working on it,\n and eventually submit a report.\n which will be shown on their profile.}
+    B --> C{A Bug Bounty hunter or researcher finds the program,\n and start working on it,\n and eventually submit a report.\n which will be shown on their profile. The report is represented as an ASA,\n which acts like an NFT, but the metadata schema differs from the standard.\n The reserve address is the program owner's address,\n the freeze address is the report creator\n and the manager is the program itself.}
     C -->|The hunter decides to close the report| D[On the frontend they issue an application call\n which will destroy the asset representing the bounty program]
     C -->|The program manager decides to compensate the hunter for their findings| E[They issue an application call\n which will pay out the hunter, after subtracting the platform fees, which is currently 2% \n then destroy the asset.]
   
@@ -37,7 +37,10 @@ Steps:
 ### Frontend
 - `cd frontend`
 - `npm install`
-- Specify the following env vars:
+ `npm run dev`
+
+
+Specify the following env vars:
  - `PUBLIC_ALGOD_SERVER`
  - `PUBLIC_ALGOD_PORT`
  - `PUBLIC_APP_ID`
@@ -46,8 +49,6 @@ Steps:
  - `PRIVATE_PINATA_JWT`
  - `PUBLIC_ORIGIN` (It is used for content resolution in my case https://contractorium.vercel.app)
  - `PUBLIC_PINATA_GATEWAY` (the URL to the gateway, if public, then no need for PUBLIC_ORIGIN)
-- `npm run dev`
-
 That'll run a dev server, locally, you'll also need to have a MyAlgo wallet setup.
 ## ⚠️ Warning! Due to some known issues, you might have to allow the site to open Pop-Ups, it is more than inconvenient, but it's a one time settings adjusting!
 # Credits:
