@@ -55,7 +55,7 @@
 				appForeignAssets: [assetID]
 			});
 		} catch (error) {
-			notifications.add('error', 'Something went wrong, please try again later!', '');
+			notifications.add('error', 'Something went wrong, please try again later!', error);
 			loading_txn = false;
 			return;
 		}
