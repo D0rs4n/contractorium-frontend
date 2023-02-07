@@ -1,0 +1,3 @@
+[submodule "contract"]
+	path = contract
+	url = https://github.com/D0rs4n/contractorium
