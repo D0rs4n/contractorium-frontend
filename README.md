@@ -44,6 +44,8 @@ Steps:
  - `PUBLIC_ALGOD_TOKEN` (It's public as of now, due to the fact that the public Algonode API does not require a token)
  - `PUBLIC_APP_ADDRESS`
  - `PRIVATE_PINATA_JWT`
+ - `PUBLIC_ORIGIN` (It is used for content resolution in my case https://contractorium.vercel.app)
+ - `PUBLIC_PINATA_GATEWAY` (the URL to the gateway, if public, then no need for PUBLIC_ORIGIN)
 - `npm run dev`
 
 That'll run a dev server, locally, you'll also need to have a MyAlgo wallet setup.
