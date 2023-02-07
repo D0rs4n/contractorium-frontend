@@ -54,8 +54,8 @@
 			await contractoriumplatform_client?.delete_report({
 				appForeignAssets: [assetID]
 			});
-		} catch (error) {
-			notifications.add('error', 'Something went wrong, please try again later!', error);
+		} catch {
+			notifications.add('error', 'Something went wrong, please try again later!', '');
 			loading_txn = false;
 			return;
 		}
