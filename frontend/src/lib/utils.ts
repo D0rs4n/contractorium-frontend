@@ -4,7 +4,7 @@ import { env } from '$env/dynamic/public';
 import { BugBounty, BugBountyReport } from './collections';
 import { error } from '@sveltejs/kit';
 
-const IPFSGateway = 'https://ipfs.algonode.xyz/ipfs/';
+const IPFSGateway = env.PUBLIC_PINATA_GATEWAY;
 
 export function jsEscape(str: string) {
 	return String(str).replace(/[^\w. ]/gi, function (c) {

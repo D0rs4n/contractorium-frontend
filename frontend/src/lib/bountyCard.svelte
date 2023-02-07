@@ -16,6 +16,7 @@
 			src={program.image.toString()}
 			class="w-16 h-16 float-right rounded-full"
 			alt={program.name.toString()}
+			crossorigin="anonymous"
 		/>
 		<h1 class="text-xl font-medium text-green-400 break-words flex">
 			<span>{program.name.toString()}</span>

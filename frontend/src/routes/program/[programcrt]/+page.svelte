@@ -190,6 +190,7 @@
 				src={data.program?.image.toString()}
 				class="w-16 h-16 md:float-right rounded-full"
 				alt={'Image name'}
+				crossorigin="anonymous"
 			/>
 			<h1 class="text-lg ml-4 text-green-400 break-words flex md:hidden">
 				<span>{data.program?.name}</span>
