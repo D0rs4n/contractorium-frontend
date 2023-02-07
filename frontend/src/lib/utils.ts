@@ -47,7 +47,7 @@ export async function fetchOneProgram(program: string): Promise<BugBounty | unde
 		if (Array.isArray(content_decoded)) {
 			let resp;
 			try {
-				resp = await fetch(IPFSGateway + jsEscape(content_decoded[1].toString()));
+				resp = await fetch(IPFSGateway + jsEscape(content_decoded[1].toString()), {headers: {'Origin': env.PUBLIC_ORIGIN}});
 			} catch {
 				throw error(
 					404,
@@ -55,7 +55,8 @@ export async function fetchOneProgram(program: string): Promise<BugBounty | unde
 				);
 			}
 			if (!resp.ok) {
-				throw error(404, 'Program could not be found!');
+				resp.url
+				throw error(404, 'Program could not be found! Gateway.');
 			}
 			const description = (await resp.json())['data']['description'];
 			return new BugBounty(
@@ -112,7 +113,7 @@ export async function fetchReportsForProgram(
 				.toString()
 				.split('.')[1];
 			const escaped_url = IPFSGateway + jsEscape(asset_url);
-			const resp = await fetch(escaped_url);
+			const resp = await fetch(escaped_url, {headers: {'Origin': env.PUBLIC_ORIGIN}});
 			let json;
 			try {
 				json = await resp.json();
