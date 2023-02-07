@@ -293,7 +293,7 @@
 										<input
 											type="text"
 											required
-											maxlength="15"
+											maxlength="35"
 											class="py-2 px-3 focus:outline-none border border-gray-400 rounded-lg"
 											placeholder="Title of your report"
 											name="name"
