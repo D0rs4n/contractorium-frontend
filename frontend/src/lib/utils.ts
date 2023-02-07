@@ -104,9 +104,6 @@ export async function fetchReportsForProgram(
 	}
 	const reports = [];
 	for (const asset of assets) {
-		if (asset['is-frozen']) {
-			continue;
-		}
 		const resp_asset = await algod_client.getAssetByID(asset['asset-id']).do();
 		if (resp_asset.params.reserve == creator_address) {
 			const asset_url = Buffer.from(resp_asset.params['url-b64'], 'base64')
@@ -144,9 +141,6 @@ export async function fetchReportsForAddress(
 	}
 	const reports = [];
 	for (const asset of assets) {
-		if (asset['is-frozen']) {
-			continue;
-		}
 		const resp_asset = await algod_client.getAssetByID(asset['asset-id']).do();
 		if (resp_asset.params.freeze == creator_address) {
 			const asset_url = Buffer.from(resp_asset.params['url-b64'], 'base64')
