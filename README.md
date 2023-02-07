@@ -50,3 +50,5 @@ Steps:
 
 That'll run a dev server, locally, you'll also need to have a MyAlgo wallet setup.
 ## ⚠️ Warning! Due to some known issues, you might have to allow the site to open Pop-Ups, it is more than inconvenient, but it's a one time settings adjusting!
+# Credits:
+- The Design and the majority of the frontend components was made by [@Marci0817](https://github.com/Marci0817)
