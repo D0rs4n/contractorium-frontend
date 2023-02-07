@@ -4,7 +4,7 @@
 Contractorium is a DApp where companies can create a bug bounty program for their product(s) (Which will be stored in a Box storage, mapped to the program managers address). Which in fact lets Ethical Hackers and researchers around the world, browse a wide variety of public bug bounty programs. If they believe, they found a bug, a low-severity vulnerability, they can submit a report, detailing their findings, and if the company decides so, they can get a compensation for their work. Bounties are represented as ASA's, which makes the whole flow much easier to handle, and more transparent.
 
 ### What does the project include?
- - A smart contract written in PyTeal with the help of the Beaker framework.
+ - A smart contract written in PyTeal with the help of the Beaker framework, and Boxes.
  - A Frontend for the contract written in SvelteKit, and TailwindCSS, with the help of Beaker-TS, and the generated client.
 
 ### But how does it actually work?
