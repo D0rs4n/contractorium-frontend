@@ -23,13 +23,18 @@ graph TD
 As of now we have an admin functionality implemented where the contract manager can delete specific programs. (It looks exactly the same way when you delete your program, that's why it wasn't explicitly featured in the video.). But in the future we would like to implement this as a DAO functionality.
 
 ## How to setup Contractorium?
-First of all, a live instance is deploy on the Testnet, and a frontend app on Vercel which you can find here.. LINK
+First of all, a live instance is deployed on the Testnet, and a frontend app on Vercel which you can find here.. LINK
+
+### Tech stack
+ - Contract: `Beaker`
+ - FrontEnd: `SvelteKit` and `TailwindCSS` with various SDKs such as `algosdk` and `myalgoconnect`
 
 But, if you decide to set it up here are the steps:
 ### Contract
 Requirements:
  - `poetry`
  - `python 3.10<=`
+ 
 
 Steps:
 - `cd backend`
