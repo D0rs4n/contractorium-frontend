@@ -19,6 +19,9 @@ graph TD
     C -->|The program manager decides to compensate the hunter for their findings| E[They issue an application call\n which will pay out the hunter, after subtracting the platform fees, which is currently 2% \n then destroy the asset.]
   
 ```
+## Admin
+As of now we have an admin functionality implemented where the contract manager can delete specific programs. (It looks exactly the same way when you delete your program, that's why it wasn't explicitly featured in the video.). But in the future we would like to implement this as a DAO functionality.
+
 ## How to setup Contractorium?
 First of all, a live instance is deploy on the Testnet, and a frontend app on Vercel which you can find here.. LINK
 
@@ -49,6 +52,8 @@ Specify the following env vars:
  - `PRIVATE_PINATA_JWT`
  - `PUBLIC_ORIGIN` (It is used for content resolution in my case https://contractorium.vercel.app)
  - `PUBLIC_PINATA_GATEWAY` (the URL to the gateway, if public, then no need for PUBLIC_ORIGIN)
+ - `PUBLIC_MANAGER` - The Contract manager, by default the creator.
+
 That'll run a dev server, locally, you'll also need to have a MyAlgo wallet setup.
 ## ⚠️ Warning! Due to some known issues, you might have to allow the site to open Pop-Ups, it is more than inconvenient, but it's a one time settings adjusting!
 # Credits:
