@@ -91,6 +91,19 @@
 			"desc": "A contract method to delete a Bug Bounty program."
 		},
 		{
+			"name": "delete_program_admin",
+			"args": [
+				{
+					"type": "address",
+					"name": "program"
+				}
+			],
+			"returns": {
+				"type": "void"
+			},
+			"desc": "A contract method to delete any Bug Bounty program, as an admin"
+		},
+		{
 			"name": "delete_report",
 			"args": [],
 			"returns": {

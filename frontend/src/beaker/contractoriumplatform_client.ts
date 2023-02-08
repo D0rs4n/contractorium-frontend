@@ -48,6 +48,12 @@ export class ContractoriumPlatform extends bkr.ApplicationClient {
 			returns: { type: 'void', desc: '' }
 		}),
 		new algosdk.ABIMethod({
+			name: 'delete_program_admin',
+			desc: '',
+			args: [{ type: 'address', name: 'program', desc: '' }],
+			returns: { type: 'void', desc: '' }
+		}),
+		new algosdk.ABIMethod({
 			name: 'delete_report',
 			desc: '',
 			args: [],
@@ -151,6 +157,17 @@ export class ContractoriumPlatform extends bkr.ApplicationClient {
 	}
 	async delete_program(txnParams?: bkr.TransactionOverrides): Promise<bkr.ABIResult<void>> {
 		const result = await this.execute(await this.compose.delete_program(txnParams));
+		return new bkr.ABIResult<void>(result);
+	}
+	async delete_program_admin(
+		args: {
+			program: string;
+		},
+		txnParams?: bkr.TransactionOverrides
+	): Promise<bkr.ABIResult<void>> {
+		const result = await this.execute(
+			await this.compose.delete_program_admin({ program: args.program }, txnParams)
+		);
 		return new bkr.ABIResult<void>(result);
 	}
 	async delete_report(txnParams?: bkr.TransactionOverrides): Promise<bkr.ABIResult<void>> {
@@ -270,6 +287,20 @@ export class ContractoriumPlatform extends bkr.ApplicationClient {
 			return this.addMethodCall(
 				algosdk.getMethodByName(this.methods, 'delete_program'),
 				{},
+				txnParams,
+				atc
+			);
+		},
+		delete_program_admin: async (
+			args: {
+				program: string;
+			},
+			txnParams?: bkr.TransactionOverrides,
+			atc?: algosdk.AtomicTransactionComposer
+		): Promise<algosdk.AtomicTransactionComposer> => {
+			return this.addMethodCall(
+				algosdk.getMethodByName(this.methods, 'delete_program_admin'),
+				{ program: args.program },
 				txnParams,
 				atc
 			);

@@ -223,7 +223,7 @@
 	on:click={() => (isOpen = !isOpen)}
 >
 	<div class="overFlowText">
-	<p class="text-lg">{report.name}</p>
+		<p class="text-lg">{report.name}</p>
 	</div>
 	<p class="text-md font-medium">
 		Created by: <span class="font-bold text-darkBlue"
